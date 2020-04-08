@@ -1,6 +1,6 @@
 #include "D3D11Framework.h"
 #include "Texture2D.h"
-#include "Core/D3D11/D3D11_Helper.h"
+#include "Core/D3D11Graphics/D3D11_Helper.h"
 
 auto Texture2D::CreateTexture(ID3D11Device * device, ID3D11Texture2D ** resource, const uint & width, const uint & height, const uint & channels, const uint & bpc, const uint & array_size, const DXGI_FORMAT & format, const uint & flags, std::vector<std::vector<std::byte>>& data) -> const bool
 {

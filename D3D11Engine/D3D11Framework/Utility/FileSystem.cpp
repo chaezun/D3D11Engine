@@ -1,6 +1,6 @@
 #include "D3D11Framework.h"
 #include "FileSystem.h"
-#include <filesystem>
+#include <filesystem> //파일을 관리하기 위한 라이브러리 포함
 #include <shellapi.h>
 
 //find()                : 주어진 문자열이 존재하는 위치-> 정방향
@@ -12,6 +12,7 @@
 
 using namespace std::filesystem;
 
+//지원되는 확장자들(인터넷 서칭을 통해 조사함)
 std::vector<std::string> FileSystem::supported_texture_formats
 {
 	".jpg",
@@ -98,7 +99,7 @@ auto FileSystem::Create_Directory(const std::string & path) -> const bool
 {
 	try
 	{
-		return create_directories(path);
+		return create_directories(path); //create_directory(path)는 path에 해당하는 폴더 하나만을 만들지만 create_directories(path)는 path에 해당하는 폴더 여러개를 모두 만듦
 	}
 
 	catch (filesystem_error& error)
@@ -112,7 +113,7 @@ auto FileSystem::Delete_Directory(const std::string & path) -> const bool
 {
 	try
 	{
-		return remove_all(path) > 0;
+		return remove_all(path) > 0; //remove_all은 경로상에 삭제된 폴더 혹은 파일의 개수를 리턴하는데 이것이 1개 이상일 경우 정상적으로 삭제됨을 의미하기 때문에 비교연산을 함.
 	}
 
 	catch (filesystem_error& error)
@@ -124,13 +125,14 @@ auto FileSystem::Delete_Directory(const std::string & path) -> const bool
 
 auto FileSystem::Delete_File(const std::string & path) -> const bool
 {
-	if (is_directory(path))
+	if (is_directory(path)) //특정 경로가 폴더인지 확인
 		return false;
 
 	try
 	{
-		return remove(path);
+		return remove(path); //특정 폴더의 파일을 삭제
 	}
+
 	catch (filesystem_error& error)
 	{
 		LOG_ERROR_F("%s, %s", error.what(), path.c_str());
@@ -140,16 +142,16 @@ auto FileSystem::Delete_File(const std::string & path) -> const bool
 
 auto FileSystem::Copy_File(const std::string & src, const std::string & dst) -> const bool
 {
-	if (src == dst)
+	if (src == dst) //src(발신자), dst(수신자)가 서로 같은 경우는 반환
 		return false;
 
-	//폴더가 없는 경우 생성
+	//데이터를 저장할 폴더가 없는 경우 생성
 	if (!IsExistDirectory(GetDirectoryFromPath(dst)))
 		Create_Directory(GetDirectoryFromPath(dst));
 
 	try
 	{
-		return copy_file(src, dst, copy_options::overwrite_existing);
+		return copy_file(src, dst, copy_options::overwrite_existing); //src폴더의 내용을 dst폴더의 내용에 복사. 복사옵션은 이미 존재하는 파일은 덮어씌우기
 	}
 
 	catch (filesystem_error& error)
@@ -163,7 +165,7 @@ auto FileSystem::IsDirectory(const std::string & path) -> const bool
 {
 	try
 	{
-		return is_directory(path);
+		return is_directory(path); //특정 경로가 폴더인지 확인 후 bool값 형식으로 반환
 	}
 
 	catch (filesystem_error& error)
@@ -177,7 +179,7 @@ auto FileSystem::IsExistDirectory(const std::string & path) -> const bool
 {
 	try
 	{
-		return exists(path);
+		return exists(path); //특정 경로에 폴더가 존재하는지 확인
 	}
 
 	catch (filesystem_error& error)
@@ -191,7 +193,7 @@ auto FileSystem::IsExistFile(const std::string & path) -> const bool
 {
 	try
 	{
-		return exists(path);
+		return exists(path); //특정 폴더에 파일이 존재하는지 확인
 	}
 
 	catch (filesystem_error& error)
@@ -209,7 +211,6 @@ auto FileSystem::GetFileNameFromPath(const std::string & path) -> const std::str
 	return file_name;
 }
 
-//확장자를 제외한 파일 이름을 구하는 함수
 auto FileSystem::GetIntactFileNameFromPath(const std::string & path) -> const std::string
 {
 	auto file_name = GetFileNameFromPath(path);

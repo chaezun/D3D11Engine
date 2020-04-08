@@ -19,5 +19,5 @@ void ConstantBuffer::Clear()
 
 void ConstantBuffer::Unmap()
 {
-    device_context->Unmap(buffer, 0);
+    device_context->Unmap(buffer, 0); //constant bufferø° lock¿ª «Ø
 }

@@ -24,11 +24,22 @@ private:
 	void DeleteSurface();
 
 private:
-    ID3D11Device* device=nullptr;
-    ID3D11DeviceContext* device_context = nullptr;
-    IDXGISwapChain* swap_chain = nullptr;
-    ID3D11RenderTargetView* render_target_view = nullptr;
-    D3D11_VIEWPORT viewport;
+	//ID가 붙으면 com 인터페이스임
+	//DX에서 자원을 만듦(여기서 자원은 GPU의 자원임)
+	ID3D11Device* device = nullptr;
+	//Device에서 만든 자원을 GPU에 어떻게 사용할지 전달하는 역할
+	//명령을 전달하는 역할
+	ID3D11DeviceContext* device_context = nullptr;
+
+	//DX가 가지고 있는 기본 하부구조
+	//IDXGISwapChain의 인터페이스는 화면을 출력하기 전
+	//렌더링 된 데이터를 저장함
+	IDXGISwapChain* swap_chain = nullptr;
+
+	//출력을 하는 도화지 역할
+	ID3D11RenderTargetView* render_target_view = nullptr;
+	//보여지는 영역
+	D3D11_VIEWPORT viewport;
     Color4 clear_color=Color4(0xff555566);
 	uint gpu_memory_size=0;
 	uint numerator=0;

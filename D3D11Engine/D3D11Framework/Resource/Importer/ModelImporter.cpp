@@ -260,11 +260,11 @@ auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assi
 		{
 			if (AI_SUCCESS == assimp_material->GetTexture(assimp_type, 0, &texture_path))
 			{
-				//const auto deduced_path = AssimpHelper::ValidatePath(texture_path.data, model_path);
-				//if(FileSystem::IsSupportedTextureFile(deduced_path))
-				//  model->AddTexture(material, native_type, deduced_path);
+				const auto deduced_path = AssimpHelper::ValidatePath(texture_path.data, model_path);
+				if(FileSystem::IsSupportedTextureFile(deduced_path))
+				  model->AddTexture(material, native_type, deduced_path);
 
-				////embedded_texture : 모델에 포함된 텍스처(이미지) 파일이 있는지 확인
+				//embedded_texture : 모델에 포함된 텍스처(이미지) 파일이 있는지 확인
 				//else if (const auto embedded_texture = assimp_scene->GetEmbeddedTexture(FileSystem::GetFileNameFromPath(texture_path.data).c_str()))
 				//{
 				//    const auto path = Texture2D::SaveEmbeddedTextureToFile
@@ -275,7 +275,7 @@ auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assi
 				//		embedded_texture->mHeight,
 				//		embedded_texture->pcData
 				//	);
-
+				//
 				//	if(path!=NOT_ASSIGNED_STR)
 				//	  model->AddTexture(material, native_type, path);
 				//}

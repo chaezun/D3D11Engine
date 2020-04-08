@@ -18,5 +18,4 @@ public:
 private:
    ID3D11Device* device=nullptr;
    ID3D11DepthStencilState* state=nullptr;
-
 };

@@ -161,22 +161,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core\Context.h" />
-    <ClInclude Include="Core\D3D11\BasicData\D3D11_Config.h" />
-    <ClInclude Include="Core\D3D11\BasicData\Geometry.h" />
-    <ClInclude Include="Core\D3D11\BasicData\Vertex.h" />
-    <ClInclude Include="Core\D3D11\CommandList.h" />
-    <ClInclude Include="Core\D3D11\D3D11_Helper.h" />
-    <ClInclude Include="Core\D3D11\D3D11_Object.h" />
-    <ClInclude Include="Core\D3D11\IA\IndexBuffer.h" />
-    <ClInclude Include="Core\D3D11\IA\InputLayout.h" />
-    <ClInclude Include="Core\D3D11\IA\VertexBuffer.h" />
-    <ClInclude Include="Core\D3D11\OM\DepthStencilState.h" />
-    <ClInclude Include="Core\D3D11\RS\RasterizerState.h" />
-    <ClInclude Include="Core\D3D11\Shader\ConstantBuffer.h" />
-    <ClInclude Include="Core\D3D11\Shader\IShader.h" />
-    <ClInclude Include="Core\D3D11\Shader\PixelShader.h" />
-    <ClInclude Include="Core\D3D11\Shader\SamplerState.h" />
-    <ClInclude Include="Core\D3D11\Shader\VertexShader.h" />
+    <ClInclude Include="Core\D3D11Graphics\BasicData\D3D11_Config.h" />
+    <ClInclude Include="Core\D3D11Graphics\BasicData\Geometry.h" />
+    <ClInclude Include="Core\D3D11Graphics\BasicData\Vertex.h" />
+    <ClInclude Include="Core\D3D11Graphics\CommandList.h" />
+    <ClInclude Include="Core\D3D11Graphics\D3D11_Helper.h" />
+    <ClInclude Include="Core\D3D11Graphics\D3D11_Object.h" />
+    <ClInclude Include="Core\D3D11Graphics\IA\IndexBuffer.h" />
+    <ClInclude Include="Core\D3D11Graphics\IA\InputLayout.h" />
+    <ClInclude Include="Core\D3D11Graphics\IA\VertexBuffer.h" />
+    <ClInclude Include="Core\D3D11Graphics\OM\BlendState.h" />
+    <ClInclude Include="Core\D3D11Graphics\OM\DepthStencilState.h" />
+    <ClInclude Include="Core\D3D11Graphics\RS\RasterizerState.h" />
+    <ClInclude Include="Core\D3D11Graphics\Shader\ConstantBuffer.h" />
+    <ClInclude Include="Core\D3D11Graphics\Shader\IShader.h" />
+    <ClInclude Include="Core\D3D11Graphics\Shader\PixelShader.h" />
+    <ClInclude Include="Core\D3D11Graphics\Shader\SamplerState.h" />
+    <ClInclude Include="Core\D3D11Graphics\Shader\VertexShader.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EventSystem\EventSystem.h" />
     <ClInclude Include="Core\Subsystem\Graphics.h" />
@@ -192,9 +193,9 @@
     <ClInclude Include="Core\Window.h" />
     <ClInclude Include="D3D11Framework.h" />
     <ClInclude Include="Gizmo\Grid.h" />
-    <ClInclude Include="Log\Engine_Logger.h" />
-    <ClInclude Include="Log\ILogger.h" />
-    <ClInclude Include="Log\Log.h" />
+    <ClInclude Include="Utility\Log\Engine_Logger.h" />
+    <ClInclude Include="Utility\Log\ILogger.h" />
+    <ClInclude Include="Utility\Log\Log.h" />
     <ClInclude Include="Math\BoundBox.h" />
     <ClInclude Include="Math\Color4.h" />
     <ClInclude Include="Math\Math.h" />
@@ -233,18 +234,19 @@
     <ClInclude Include="Utility\GUID_Generator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\D3D11\BasicData\Vertex.cpp" />
-    <ClCompile Include="Core\D3D11\CommandList.cpp" />
-    <ClCompile Include="Core\D3D11\IA\IndexBuffer.cpp" />
-    <ClCompile Include="Core\D3D11\IA\InputLayout.cpp" />
-    <ClCompile Include="Core\D3D11\IA\VertexBuffer.cpp" />
-    <ClCompile Include="Core\D3D11\OM\DepthStencilState.cpp" />
-    <ClCompile Include="Core\D3D11\RS\RasterizerState.cpp" />
-    <ClCompile Include="Core\D3D11\Shader\ConstantBuffer.cpp" />
-    <ClCompile Include="Core\D3D11\Shader\IShader.cpp" />
-    <ClCompile Include="Core\D3D11\Shader\PixelShader.cpp" />
-    <ClCompile Include="Core\D3D11\Shader\SamplerState.cpp" />
-    <ClCompile Include="Core\D3D11\Shader\VertexShader.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\BasicData\Vertex.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\CommandList.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\IA\IndexBuffer.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\IA\InputLayout.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\IA\VertexBuffer.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\OM\BlendState.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\OM\DepthStencilState.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\RS\RasterizerState.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\Shader\ConstantBuffer.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\Shader\IShader.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\Shader\PixelShader.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\Shader\SamplerState.cpp" />
+    <ClCompile Include="Core\D3D11Graphics\Shader\VertexShader.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Subsystem\Graphics.cpp" />
     <ClCompile Include="Core\Subsystem\Input.cpp" />
@@ -260,7 +262,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Gizmo\Grid.cpp" />
-    <ClCompile Include="Log\Log.cpp" />
+    <ClCompile Include="Utility\Log\Log.cpp" />
     <ClCompile Include="Math\BoundBox.cpp" />
     <ClCompile Include="Math\Color4.cpp" />
     <ClCompile Include="Math\Math.cpp" />
@@ -298,7 +300,7 @@
     <ClCompile Include="Utility\GUID_Generator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\D3D11\BasicData\Geometry.inl">
+    <ClInclude Include="Core\D3D11Graphics\BasicData\Geometry.inl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

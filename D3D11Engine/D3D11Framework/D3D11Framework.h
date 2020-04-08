@@ -60,9 +60,7 @@ typedef unsigned long ulong;
 #include "Utility/GUID_Generator.h"
 #include "Utility/FileSystem.h"
 #include "Utility/FileStream.h"
-
-//Log
-#include "Log/Log.h"
+#include "Utility/Log/Log.h"
 
 //Main System
 #include "Core/Settings.h"
@@ -83,21 +81,21 @@ typedef unsigned long ulong;
 #include "Core/Subsystem/Renderer.h"
 
 //Basic Data
-#include "Core/D3D11/BasicData/D3D11_Config.h"
-#include "Core/D3D11/BasicData/Vertex.h"
-#include "Core/D3D11/BasicData/Geometry.h"
+#include "Core/D3D11Graphics/BasicData/D3D11_Config.h"
+#include "Core/D3D11Graphics/BasicData/Vertex.h"
+#include "Core/D3D11Graphics/BasicData/Geometry.h"
 
 //D3D11 Wrapper class
-#include "Core/D3D11/D3D11_Object.h"
-#include "Core/D3D11/IA/VertexBuffer.h"
-#include "Core/D3D11/IA/IndexBuffer.h"
-#include "Core/D3D11/IA/InputLayout.h"
-#include "Core/D3D11/Shader/VertexShader.h"
-#include "Core/D3D11/Shader/PixelShader.h"
-#include "Core/D3D11/Shader/ConstantBuffer.h"
-#include "Core/D3D11/Shader/SamplerState.h"
-#include "Core/D3D11/RS/RasterizerState.h"
-#include "Core/D3D11/OM/DepthStencilState.h"
+#include "Core/D3D11Graphics/D3D11_Object.h"
+#include "Core/D3D11Graphics/IA/VertexBuffer.h"
+#include "Core/D3D11Graphics/IA/IndexBuffer.h"
+#include "Core/D3D11Graphics/IA/InputLayout.h"
+#include "Core/D3D11Graphics/Shader/VertexShader.h"
+#include "Core/D3D11Graphics/Shader/PixelShader.h"
+#include "Core/D3D11Graphics/Shader/ConstantBuffer.h"
+#include "Core/D3D11Graphics/Shader/SamplerState.h"
+#include "Core/D3D11Graphics/RS/RasterizerState.h"
+#include "Core/D3D11Graphics/OM/DepthStencilState.h"
 
 //Shader
 #include "Shader/Shader.h"

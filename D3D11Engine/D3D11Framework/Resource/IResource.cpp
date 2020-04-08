@@ -12,7 +12,7 @@ IResource::IResource(Context * context, const ResourceType & resource_type)
 template<typename T>
 constexpr ResourceType IResource::DeduceResourceType()
 {
-	return ResourceType::Unknown;
+	return ResourceType::Unknown; //default ¹ÝÈ¯°ª
 }
 
 

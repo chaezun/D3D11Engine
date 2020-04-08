@@ -24,8 +24,8 @@ auto VertexBuffer::Map() -> void *
 		&mapped_subresource
 	));
 
-	if(!result)
-	  LOG_ERROR("Failed to map buffer");
+	if (!result)
+		LOG_ERROR("Failed to map buffer");
 
 	return mapped_subresource.pData;
 }
@@ -33,7 +33,6 @@ auto VertexBuffer::Map() -> void *
 void VertexBuffer::Unmap()
 {
 	device_context->Unmap(buffer, 0);
-
 }
 
 void VertexBuffer::Clear()

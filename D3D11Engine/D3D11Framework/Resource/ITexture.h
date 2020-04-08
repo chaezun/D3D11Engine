@@ -1,18 +1,19 @@
 #pragma once
 #include "IResource.h"
 
-enum TEXTURE_BIND_FLAGS :uint
+//비트단위를 사용하는 이유: 공간의 낭비를 최소화하기 위해 하드웨어의 제어와 상태 확인을 위한
+//레지스터에 비트단위로 기능을 할당하기 위함.
+enum TEXTURE_BIND_FLAGS : uint //자원뷰는 총 4가지
 {
-	TEXTURE_BIND_RTV = 1U << 0, //0001
-	TEXTURE_BIND_DSV = 1U << 1, //0010
-	TEXTURE_BIND_SRV = 1U << 2, //0100
-	TEXTURE_BIND_UAV = 1U << 3, //1000
+	TEXTURE_BIND_RTV = 1U << 0,//Binary에서 0번째 비트를 1로 설정(..0001), ID3D11RenderTargetView
+	TEXTURE_BIND_DSV = 1U << 1,//Binary에서 1번째 비트를 1로 설정(..0010), ID3D11DepthStencilView
+	TEXTURE_BIND_SRV = 1U << 2,//Binary에서 2번째 비트를 1로 설정(..0100), ID3D11ShaderResourceView
+	TEXTURE_BIND_UAV = 1U << 3,//Binary에서 3번째 비트를 1로 설정(..1000), ID3D11UnorderedAccessView
 };
 
 class ITexture : public IResource
 {
 public: 
-   //과제 byte와 std::byte와의 차이점
    typedef std::vector<std::byte> mip_level;
 
 public: 
@@ -21,7 +22,6 @@ public:
 
    virtual const bool SaveToFile(const std::string& path) override;
    virtual const bool LoadFromFile(const std::string& path) override;
-
 
    //=================================================================================================================
    //[property]
@@ -64,8 +64,7 @@ public:
    //=================================================================================================================
    //[Load]
    //=================================================================================================================
-   //확장자가 .PNG, .bmp일 때 사용
-   auto Load_Foreign(const std::string& path, const bool& is_generate_mip_map) -> const bool;
+   auto Load_Foreign(const std::string& path, const bool& is_generate_mip_map) -> const bool; //확장자가 .PNG, .bmp일 때 사용
    auto Load_Native(const std::string& path) -> const bool;
 
    //=================================================================================================================
@@ -88,7 +87,8 @@ protected:
     auto GetChannelsFromFormat(const DXGI_FORMAT& format) ->const uint;
 
 protected:
-   ID3D11Device* device=nullptr;
+ //D3D11에서 자원 뷰는 Device에서 생성 및 해제를 담당하기 때문에 필요
+   ID3D11Device* device = nullptr;
 
    //bit per pixel (픽셀당 비트)
    uint bpp=0;
@@ -109,6 +109,8 @@ protected:
    D3D11_VIEWPORT viewport;
 
    //mip_level이 작을 수록 원본을 의미
+   //mip_chain은 렌더링 속도를 향상시키기 위한 목적으로 기본 텍스처와
+   //이를 연속적으로 미리 축소시킨 텍스처들로 이루어진 비트맵 이미지의 집합.
    std::vector<mip_level> mip_chain;
 
    ID3D11ShaderResourceView* shader_resource_view=nullptr;

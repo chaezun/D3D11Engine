@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/D3D11/Shader/IShader.h"
+#include "Core/D3D11Graphics/Shader/IShader.h"
 
 //여러 shader를 관리하는 클래스
 class Shader final : public D3D11_Object

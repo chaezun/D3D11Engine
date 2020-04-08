@@ -8,18 +8,19 @@ struct Log_pair final
 	int type;
 };
 
+//실제로 엔진에서 로그를 찍을 클래스
 class Engine_Logger final : public ILogger
 {
 public:
 	typedef std::function<void(const Log_pair&)> log_function;
 
 public:
-	void SetCallBack(log_function&& function)
+	void SetCallBack(log_function&& function) //실제로 함수포인터를 사용해서 log를 추가하는 함수
 	{
 		callback_function = std::forward<log_function>(function);
 	}
 
-	void Log(const std::string & log, const uint & type) override
+	void Log(const std::string& log, const uint& type) override
 	{
 		Log_pair log_pair;
 		log_pair.text = log;
@@ -31,9 +32,3 @@ public:
 private:
 	log_function callback_function;
 };
-
-//  int a = 10;
-//  lvalue  rvalue
-//  &붙였을때 주소가 나오면 l벨류 안나오면 r벨류
-
-// && -> R벨류참조

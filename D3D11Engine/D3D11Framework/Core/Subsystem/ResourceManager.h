@@ -72,33 +72,34 @@ private:
 template<typename T>
 inline auto ResourceManager::Load(const std::string & path) -> std::shared_ptr<T>
 {
-	static_assert(std::is_base_of<IResource, T>::value, "Provided type does not implement IResource");
+	static_assert(std::is_base_of<IResource, T>::value, "Provided type does not implement IResource"); //적용하려는 클래스가 IResource의 파생클래스가 아니라는 뜻
 
-	if (!FileSystem::IsExistFile(path))
+	if (!FileSystem::IsExistFile(path)) //파일이 존재하는지 판별
 	{
-		LOG_ERROR_F("Path \"%s\"is invalid", path.c_str());
 		return nullptr;
 	}
 
-	auto relative_path = FileSystem::GetRelativeFromPath(path);
-	auto resource_name = FileSystem::GetIntactFileNameFromPath(relative_path);
+	auto relative_path = FileSystem::GetRelativeFromPath(path); //경로를 상대경로로 변환
+	auto resource_name = FileSystem::GetIntactFileNameFromPath(relative_path); //상대경로를 통해 파일이름을 구함
 
-	if (HasResource(resource_name, IResource::DeduceResourceType<T>()))
+	if (HasResource(resource_name, IResource::DeduceResourceType<T>())) //리소스 이름과 리소스 타입이 일치하는 것이 있는지 판별
 		return GetResourceFromName<T>(resource_name);
 
-	auto resource = std::make_shared<T>(context);
-	resource->SetResourceName(resource_name);
-	resource->SetResourcePath(relative_path);
-
-	if (!resource->LoadFromFile(relative_path))
+	else //일치하는 것이 없다면 새로 생성함
 	{
-		LOG_ERROR_F("Failed to load \"%s\" ", relative_path.c_str());
-		return nullptr;
+		auto resource = std::make_shared<T>(context);
+		resource->SetResourceName(resource_name);
+		resource->SetResourcePath(relative_path);
+
+		if (!resource->LoadFromFile(relative_path))
+		{
+			return nullptr;
+		}
+
+		RegisterResource<T>(resource);
+
+		return resource;
 	}
-
-	RegisterResource<T>(resource);
-
-	return resource;
 }
 
 template<typename T>

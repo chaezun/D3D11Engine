@@ -7,6 +7,7 @@ enum EngineFlags : uint
 	EngineFlags_Game = 1U << 2,
 };
 
+//프로그램의 시작점 -> D3D11Engine와 D3D11Framework를 연결해주는 역할
 class Engine final
 {
 public: 

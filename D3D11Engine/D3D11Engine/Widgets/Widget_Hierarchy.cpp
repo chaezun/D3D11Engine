@@ -7,11 +7,11 @@
 
 namespace Hierarchy_Data
 {
-	static Scene* current_scene=nullptr;
-	static Actor* copied_actor=nullptr;
-	static Actor* hovered_actor=nullptr;
-	static Actor* clicked_actor=nullptr;
-	static bool is_show_rename_popup=false;
+	static Scene* current_scene = nullptr;
+	static Actor* copied_actor = nullptr;
+	static Actor* hovered_actor = nullptr;
+	static Actor* clicked_actor = nullptr;
+	static bool is_show_rename_popup = false;
 }
 
 Widget_Hierarchy::Widget_Hierarchy(Context * context)
@@ -38,7 +38,7 @@ void Widget_Hierarchy::Render()
 
 void Widget_Hierarchy::ShowHierarchy()
 {
-    Hierarchy_Data::current_scene=Editor_Helper::Get().scene_manager->GetCurrentScene();
+    Hierarchy_Data::current_scene = Editor_Helper::Get().scene_manager->GetCurrentScene();
 
 	//ImGuiTreeNodeFlags_DefaultOpen : 시작부터 하위노드를 다 보여주는 옵션
 	if (ImGui::CollapsingHeader(Hierarchy_Data::current_scene->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -59,9 +59,10 @@ void Widget_Hierarchy::ShowMenuPopup()
 
 	if (ImGui::BeginMenu("Create 3D"))
 	{
-		if (ImGui::MenuItem("Quad")) CreateStandardMesh(MeshType::Quad);
 		if (ImGui::MenuItem("Cube")) CreateStandardMesh(MeshType::Cube);
 		if (ImGui::MenuItem("Sphere")) CreateStandardMesh(MeshType::Sphere);
+		if (ImGui::MenuItem("Plane")) CreateStandardMesh(MeshType::Plane);
+		if (ImGui::MenuItem("Capsule")) CreateStandardMesh(MeshType::Capsule);
 
 		ImGui::EndMenu();
 	}
@@ -90,8 +91,6 @@ void Widget_Hierarchy::AddActor(const std::shared_ptr<class Actor>& actor)
    {
 	   const auto is_selected = selected_actor ->GetID() == actor->GetID();
 	   flags |= is_selected ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None;
-
-	   //TODO : 
    }
 
    //노드 추가해서 화면에 보여주는 역할
@@ -166,16 +165,21 @@ void Widget_Hierarchy::CreateStandardMesh(const MeshType & mesh_type)
 		Editor_Helper::Get().LoadModel(directory + "Cube.fbx");
 		break;
 	}
-	case MeshType::Cylinder: break;
-	case MeshType::Cone: break;
 	case MeshType::Sphere: 
 	{
 		Editor_Helper::Get().LoadModel(directory + "Sphere.fbx");
 		break;
 	}
-	case MeshType::Plane: break;
-	case MeshType::Capsule: break;
-	case MeshType::Quad: break;
+	case MeshType::Plane:
+	{
+		Editor_Helper::Get().LoadModel(directory + "Plane.fbx");
+		break;
+	}
+	case MeshType::Capsule:
+	{
+		Editor_Helper::Get().LoadModel(directory + "Capsule.fbx");
+		break;
+	}
 	}
 }
 

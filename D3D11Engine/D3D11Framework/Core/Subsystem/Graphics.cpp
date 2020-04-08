@@ -17,6 +17,7 @@ Graphics::~Graphics()
 
 const bool Graphics::Initialize()
 {
+	//지원하는 해상도 찾기
 	IDXGIFactory* factory = nullptr;
 	auto hr = CreateDXGIFactory
 	(
@@ -84,7 +85,8 @@ const bool Graphics::Initialize()
 	std::wcout << "GPU Description : " << gpu_description << std::endl;
 	//=========================================================================================
 
-	CreateSwapChain();
+	CreateSwapChain(); //SwapChain 생성
+	CreateRenderTargetView(); //RenderTargetView 생성
 	Resize
 	(
 		static_cast<uint>(Settings::Get().GetWidth()),
@@ -97,11 +99,13 @@ const bool Graphics::Initialize()
 
 void Graphics::Resize(const uint & width, const uint & height)
 {
-	//Delete RTV
-	DeleteSurface();
+	DeleteSurface(); //RenderTargetView Release
 
 	//Resize
 	{
+		//변경할 값을 제외한 값은 모두 0
+		//출력을 할 화면의 크기를 설정
+		//swap_chain의 버퍼를 다시 조정
 		auto hr = swap_chain->ResizeBuffers
 		(
 			0,
@@ -113,7 +117,6 @@ void Graphics::Resize(const uint & width, const uint & height)
 		assert(SUCCEEDED(hr));
 	}
 
-	//Create RTV
 	CreateRenderTargetView();
 
 	SetViewport(width, height);
@@ -130,6 +133,7 @@ void Graphics::SetViewport(const uint & width, const uint & height)
 
 }
 
+//새로 그리는 곳
 void Graphics::BeginScene()
 {
 	device_context->OMSetRenderTargets(1, &render_target_view, nullptr);
@@ -137,6 +141,7 @@ void Graphics::BeginScene()
 	device_context->ClearRenderTargetView(render_target_view, clear_color);
 }
 
+//그린 것을 앞으로 출력하는 곳
 void Graphics::EndScene()
 {
 	auto hr = swap_chain->Present(Settings::Get().IsVsync() ? 1 : 0, 0);
@@ -149,6 +154,8 @@ void Graphics::CreateSwapChain()
 	ZeroMemory(&desc, sizeof(DXGI_SWAP_CHAIN_DESC));
 	desc.BufferDesc.Width = 0;
 	desc.BufferDesc.Height = 0;
+	//주사율(프레임) 설정
+	//분자
 	desc.BufferDesc.RefreshRate.Numerator = Settings::Get().IsVsync() ? numerator : 0;
 	desc.BufferDesc.RefreshRate.Denominator = Settings::Get().IsVsync() ? denominator : 1;
 	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -156,12 +163,20 @@ void Graphics::CreateSwapChain()
 	desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	desc.BufferCount = 1;
 	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	//Sample:특정 데이터를 추출
+	//현재는 사용하지 않음
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.OutputWindow = Settings::Get().GetWindowHandle();
 	desc.Windowed = TRUE;
+	//SwapChain을 할때 완료한 데이터를 저장하지 않고 삭제
 	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
+	//SSAA: 이미지를 몇배 확대시켜 계단현상을 조절
+	//MSAA: 외곽선 부분만 계단현상을 조절
+	//두 기법모두 비용이 많이 듦
+
+	//D3D 버전 설정
 	std::vector<D3D_FEATURE_LEVEL> feature_levels
 	{
 		D3D_FEATURE_LEVEL_11_1,
@@ -173,6 +188,7 @@ void Graphics::CreateSwapChain()
 		D3D_FEATURE_LEVEL_9_1,
 	};
 
+	//D3D_DRIVER_TYPE_HARDWARE: 컴퓨터에 내장된 그래픽카드를 그대로 사용한다는 뜻
 	auto hr = D3D11CreateDeviceAndSwapChain
 	(
 		nullptr,
@@ -188,13 +204,14 @@ void Graphics::CreateSwapChain()
 		nullptr,
 		&device_context
 	);
-	assert(SUCCEEDED(hr));
 
+	assert(SUCCEEDED(hr));
 }
 
 void Graphics::CreateRenderTargetView()
 {
 	ID3D11Texture2D* back_buffer = nullptr;
+	//__uuidof : 범용고유 식별자 
 	auto hr = swap_chain->GetBuffer
 	(
 		0,

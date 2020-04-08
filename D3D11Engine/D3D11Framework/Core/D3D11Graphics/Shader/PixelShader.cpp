@@ -17,10 +17,14 @@ void PixelShader::Create(const std::string & path, const std::string & function_
     this->function_name = function_name != NOT_ASSIGNED_STR ? function_name : "PS";
     this->profile       = profile       != NOT_ASSIGNED_STR ? profile       : "ps_5_0";
 
+	//IShader의 가상함수 CompileShader 호출
     auto result = CompileShader(this->path, this->function_name, this->profile, defines, &blob);
-    if (!result)
+    
+	//Pixel Shader 컴파일에 실패했을 경우
+	if (!result)
         return;
-
+    
+	//Pixel Shader 컴파일에 성공했을 경우
     auto hr = device->CreatePixelShader
     (
         blob->GetBufferPointer(),

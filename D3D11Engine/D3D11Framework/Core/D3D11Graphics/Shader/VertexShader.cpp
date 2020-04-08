@@ -17,10 +17,14 @@ void VertexShader::Create(const std::string & path, const std::string & function
     this->function_name = function_name != NOT_ASSIGNED_STR ? function_name : "VS";
     this->profile       = profile       != NOT_ASSIGNED_STR ? profile       : "vs_5_0";
 
+	//IShader의 가상함수 CompileShader 호출
     auto result = CompileShader(this->path, this->function_name, this->profile, defines, &blob);
-    if (!result)
+    
+	//Vertex Shader 컴파일에 실패했을 경우
+	if (!result)
         return;
 
+	//Vertex Shader 컴파일에 성공했을 경우
     auto hr = device->CreateVertexShader
     (
         blob->GetBufferPointer(),

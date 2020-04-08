@@ -48,10 +48,10 @@ auto ResourceManager::HasResource(const std::string & resource_name, const Resou
 
 void ResourceManager::SetProjectDirectory(const std::string &directory)
 {
-   if(!FileSystem::IsExistDirectory(directory))
+   if(!FileSystem::IsExistDirectory(directory)) //인자로 들어온 디렉토리 경로에 디렉토리가 존재하지 않으면 생성
 	   FileSystem::Create_Directory(directory);
 
-   project_directory=directory;
+   project_directory=directory; //이미 존재한다면 바로 대입
 }
 
 auto ResourceManager::GetAssetDirectory(const AssetType & type) -> const std::string

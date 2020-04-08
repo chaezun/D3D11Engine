@@ -1,15 +1,20 @@
 #pragma once
 #include "D3D11Framework.h"
 
+//Config의 사용용도 : 렌더링에 필요한 데이터를 미리 정의하고 사용.
+
 static const std::string NOT_ASSIGNED_STR = "N/A";
 static const std::string MODEL_BIN_EXTENSION = ".model";
 static const std::string MESH_BIN_EXTENSION = ".mesh";
 static const std::string TEXTURE_BIN_EXTENSION = ".texture";
-static const std::string MATERIAL_BIN_EXTENSION = ".mat";
+static const std::string MATERIAL_BIN_EXTENSION = ".material";
 
 enum class ShaderScope : uint
 {
-    Unknown, Global, VS, PS
+    Unknown, 
+	Global, //Constant Buffer  
+	VS,     //Vertex Shader
+	PS      //Pixel Shader
 };
 
 struct GLOBAL_DATA final

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/D3D11/D3D11_Object.h"
+#include "Core/D3D11Graphics/D3D11_Object.h"
 
 enum class ResourceType :uint
 {
@@ -16,6 +16,8 @@ enum class ResourceType :uint
 class IResource : public D3D11_Object
 {
 public:
+	//Resource의 유형을 추론하는 함수. 
+	//어떤 유형이 들어올지 확신할 수 없기 때문에 Template로 정의
     template<typename T>
 	static constexpr ResourceType DeduceResourceType();
 
@@ -24,8 +26,10 @@ public:
 	IResource(class Context* context, const ResourceType& resource_type= ResourceType::Unknown);
 	virtual ~IResource()=default;
 
-	virtual const bool SaveToFile(const std::string& path)=0;
-	virtual const bool LoadFromFile(const std::string& path)=0;
+	//특정 경로에 위차한 파일을 저장(오버라이딩)
+	virtual const bool SaveToFile(const std::string& path) = 0;
+	//특정 경로에 위차한 파일을 실행(오버라이딩)
+	virtual const bool LoadFromFile(const std::string& path) = 0;
 
 	auto GetResourceType() const -> const ResourceType& {return resource_type;}
 	void SetResourceType(const ResourceType& type) {this->resource_type=type;}

@@ -6,46 +6,45 @@ FileStream::FileStream(const std::string & path, const uint & flags)
 	this->is_open = false;
 	this->flags = flags;
 
-	int ios_flags = std::ios::binary;
-	ios_flags |= (this->flags& FILE_STREAM_WRITE) ? std::ios::out : 0U;
-	ios_flags |= (this->flags& FILE_STREAM_READ) ? std::ios::in : 0U;
-	ios_flags |= (this->flags& FILE_STREAM_APPEND) ? std::ios::app : 0U;
+	int ios_flags = std::ios::binary; //파일을 바이너리 형식으로 입출력 혹은 추가를 함
+	ios_flags |= (this->flags & FILE_STREAM_WRITE) ? std::ios::out : 0U; //바이너리 형식 + 파일에 쓰기
+	ios_flags |= (this->flags & FILE_STREAM_READ) ? std::ios::in : 0U; //바이너리 형식 + 파일데이터 읽기
+	ios_flags |= (this->flags & FILE_STREAM_APPEND) ? std::ios::app : 0U; //바이너리 형식 + 파일에 추가
 
-	if (this->flags& FILE_STREAM_WRITE)
+	if (this->flags & FILE_STREAM_WRITE)
 	{
-	     f_out.open(path,ios_flags);
-		 if (f_out.fail())
-		 {
-		    LOG_ERROR_F("Failed to open \"%s\" for writing", path.c_str());
-			return ;
-		 }
+		f_out.open(path, ios_flags);
+		if (f_out.fail())
+		{
+			return;
+		}
 	}
-	else if (this->flags& FILE_STREAM_READ)
+	else if (this->flags & FILE_STREAM_READ)
 	{
 		f_in.open(path, ios_flags);
 		if (f_in.fail())
 		{
-			LOG_ERROR_F("Failed to open \"%s\" for reading", path.c_str());
 			return;
 		}
 	}
 
-	is_open=true;
+	is_open = true;
+
 }
 
 FileStream::~FileStream()
 {
-   Close();
+	Close();
 }
 
 void FileStream::Close()
 {
-	if (this->flags& FILE_STREAM_WRITE)
+	if (this->flags & FILE_STREAM_WRITE)
 	{
 		f_out.flush();
 		f_out.close();
 	}
-	else if (this->flags& FILE_STREAM_READ)
+	else if (this->flags & FILE_STREAM_READ)
 	{
 		f_in.clear();
 		f_in.close();
@@ -54,59 +53,51 @@ void FileStream::Close()
 
 void FileStream::Skip(const uint & n)
 {
-   if(this->flags& FILE_STREAM_WRITE)
-      //특정 위치를 찾음(현재 위치에서 n번째 까지)
-      f_out.seekp(n,std::ios::cur);
-
-   else if (this->flags& FILE_STREAM_READ)
-	  f_in.ignore(n, std::ios::cur);
+	if (flags & FILE_STREAM_WRITE)
+		f_out.seekp(n, std::ios::cur); //현재 스트림내 커서위치에서 n만큼 떨어진 곳에서 다시 쓰기
+	else if (flags & FILE_STREAM_READ)
+		f_in.ignore(n, std::ios::cur); //현재 스트림내 커서위치까지만 n개의 문자를 읽음
 }
 
 void FileStream::Write(const void * value, const uint & size)
 {
-   f_out.write(reinterpret_cast<const char*>(value),size);
+	f_out.write(reinterpret_cast<const char*>(value), size);
 }
 
 void FileStream::Write(const std::string & value)
 {
-   const auto length=static_cast<uint>(value.length());
+	const auto length = static_cast<uint>(value.length());
+	Write(length);
 
-   Write(length);
-
-   f_out.write(value.c_str(),length);
+	f_out.write(value.c_str(), length);
 }
 
 void FileStream::Write(const std::vector<std::byte>& value)
 {
 	const auto length = static_cast<uint>(value.size());
-
 	Write(length);
 
 	f_out.write(reinterpret_cast<const char*>(value.data()), length);
 }
 
-void FileStream::Read(std::string& value)
+void FileStream::Read(std::string & value)
 {
-   uint length=Read<uint>();
+	auto length = Read<uint>();
 
-   //배열 초기화
-   value.clear();
-   //capacity초기화
-   value.shrink_to_fit();
+	value.clear();
+	value.shrink_to_fit();
 
-   value.reserve(length);
-   value.resize(length);
-   
-   f_in.read(value.data(), length);
+	value.reserve(length);
+	value.resize(length);
+
+	f_in.read(value.data(), length);
 }
 
 void FileStream::Read(std::vector<std::byte>& value)
 {
-	uint length = Read<uint>();
+	auto length = Read<uint>();
 
-	//배열 초기화
 	value.clear();
-	//capacity초기화
 	value.shrink_to_fit();
 
 	value.reserve(length);
