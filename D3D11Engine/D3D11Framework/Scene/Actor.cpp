@@ -4,32 +4,32 @@
 #include "Component/Transform.h"
 
 Actor::Actor(Context * context)
-:context(context)
+	:context(context)
 {
 
 }
 
 Actor::~Actor()
 {
-   components.clear();
-   components.shrink_to_fit();
+	components.clear();
+	components.shrink_to_fit();
 }
 
 void Actor::Initialize(const std::shared_ptr<class Transform>& transform)
 {
-    this->transform=transform;
+	this->transform = transform;
 }
 
 void Actor::Start()
 {
-    if(!is_active)
-	  return;
+	if (!is_active)
+		return;
 
 	for (const auto& component : components)
 	{
 		if (!component->IsEnabled())
 		{
-		   continue;
+			continue;
 		}
 
 		component->OnStart();
@@ -92,15 +92,17 @@ auto Actor::AddComponent(const ComponentType & type) -> std::shared_ptr<ICompone
 		break;
 	case ComponentType::Collider:
 		break;
-	case ComponentType::Audto:
+	case ComponentType::AudioSource:
+		break;
+	case ComponentType::AudioListener:
 		break;
 	case ComponentType::RigidBody:
 		break;
 	case ComponentType::Constraint:
 		break;
-	
+
 	}
-	
+
 	return std::shared_ptr<IComponent>();
 }
 
@@ -108,8 +110,8 @@ auto Actor::HasComponent(const ComponentType & type) -> const bool
 {
 	for (const auto& component : components)
 	{
-		if(component->GetComponentType()==type)
-		 return true;
+		if (component->GetComponentType() == type)
+			return true;
 	}
 	return false;
 }

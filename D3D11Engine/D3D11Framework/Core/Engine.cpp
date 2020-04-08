@@ -13,6 +13,7 @@ Engine::Engine()
 	context = new Context();
 	context->RegisterSubsystem<Timer>();
 	context->RegisterSubsystem<Input>();
+	context->RegisterSubsystem<Audio>();
 	context->RegisterSubsystem<Graphics>();
 	context->RegisterSubsystem<Thread>();
 	context->RegisterSubsystem<Scripting>();

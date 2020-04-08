@@ -7,6 +7,8 @@
 #include "Light.h"
 #include "SkyBox.h"
 #include "Script.h"
+#include "AudioSource.h"
+#include "AudioListener.h"
 
 IComponent::IComponent(Context * context, Actor * actor, Transform * transform)
 : context(context),
@@ -38,4 +40,5 @@ REGISTER_COMPONENT_TYPE(Camera, ComponentType::Camera);
 REGISTER_COMPONENT_TYPE(Light, ComponentType::Light);
 REGISTER_COMPONENT_TYPE(SkyBox, ComponentType::SkyBox);
 REGISTER_COMPONENT_TYPE(Script, ComponentType::Script);
-
+REGISTER_COMPONENT_TYPE(AudioSource, ComponentType::AudioSource)
+REGISTER_COMPONENT_TYPE(AudioListener, ComponentType::AudioListener)

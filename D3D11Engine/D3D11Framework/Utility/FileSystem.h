@@ -30,10 +30,12 @@ public:
 	static auto GetSupportedTextureFormats() -> const std::vector<std::string>& { return supported_texture_formats; }
 	static auto GetSupportedModelFormats() -> const std::vector<std::string>& { return supported_model_formats; }
 	static auto GetSupportedScriptFormats() -> const std::vector<std::string>& { return supported_script_formats; }
+	static auto GetSupportedAudioFormats() -> const std::vector<std::string>& { return supported_audio_formats; }
 
 	static auto IsSupportedTextureFile(const std::string& path) -> const bool; //미리 정의했던 지원되는 확장자를 현재 경로의 파일의 확장자와 비교하여 지원되는지 여부를 확인
 	static auto IsSupportedModelFile(const std::string& path) -> const bool;
 	static auto IsSupportedScriptFile(const std::string& path) -> const bool;
+	static auto IsSupportedAudioFile(const std::string& path) -> const bool;
 
 	static auto ToUppercase(const std::string& lower) -> const std::string; //소문자 -> 대문자
 	static auto ToLowercase(const std::string& upper) -> const std::string; //대문자 -> 소문자
@@ -47,4 +49,5 @@ private:
     static std::vector<std::string> supported_texture_formats; //지원되는 확장자들(인터넷 서칭을 통해 조사함)
 	static std::vector<std::string> supported_model_formats;
 	static std::vector<std::string> supported_script_formats;
+	static std::vector<std::string> supported_audio_formats;
 };

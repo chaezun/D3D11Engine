@@ -14,6 +14,8 @@ private:
 	void ShowRenderable(std::shared_ptr<class Renderable>& renderable) const;
 	void ShowMaterial(std::shared_ptr<class Material>& material) const;
 	void ShowScript(std::shared_ptr<class Script>& script) const;
+	void ShowAudioSource(std::shared_ptr<class AudioSource>& audio_source);
+	void ShowAudioListener(std::shared_ptr<class AudioListener>& audio_listener);
 
 private:
     void ShowAddComponentButton();

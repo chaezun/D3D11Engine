@@ -11,6 +11,8 @@ enum class IconType : uint
 	Component_Material,
 	Component_Script,
 	Component_Terrain,
+	Component_AudioSource,
+	Component_AudioListener,
 
 	Console_Info,
 	Console_Warning,

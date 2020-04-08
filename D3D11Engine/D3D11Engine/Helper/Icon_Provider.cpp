@@ -15,6 +15,8 @@ void Icon_Provider::Initialize(Context * context)
 	Load(directory + "Icon/component_Material.png", IconType::Component_Material);
 	Load(directory + "Icon/component_Script.png", IconType::Component_Script);
 	Load(directory + "Icon/component_terrain.png", IconType::Component_Terrain);
+	Load(directory + "Icon/component_AudioListener.png", IconType::Component_AudioListener);
+	Load(directory + "Icon/component_AudioSource.png", IconType::Component_AudioSource);
 
 	Load(directory + "Icon/log_info.png", IconType::Console_Info);
 	Load(directory + "Icon/log_warning.png", IconType::Console_Warning);

@@ -4,6 +4,8 @@
 #include "Scene/Component/Transform.h"
 #include "Scene/Component/Renderable.h"
 #include "Scene/Component/Script.h"
+#include "Scene/Component/AudioSource.h"
+#include "Scene/Component/AudioListener.h"
 
 namespace Inspector_Data
 {
@@ -95,6 +97,12 @@ void Widget_Inspector::Render()
 
 		auto script = actor->GetComponent<Script>();
 		ShowScript(script);
+
+		auto audio_source = actor->GetComponent<AudioSource>();
+		ShowAudioSource(audio_source);
+
+		auto audio_listener = actor->GetComponent<AudioListener>();
+		ShowAudioListener(audio_listener);
 	}
 
 	ShowAddComponentButton();
@@ -334,6 +342,90 @@ void Widget_Inspector::ShowScript(std::shared_ptr<class Script>& script) const
 	Inspector_Data::ComponentEnd();
 }
 
+void Widget_Inspector::ShowAudioSource(std::shared_ptr<class AudioSource>& audio_source)
+{
+	if (!audio_source)
+		return;
+
+	if (Inspector_Data::ComponentBegin("AudioSource", IconType::Component_AudioSource, audio_source))
+	{
+		auto audio_clip_name = audio_source->GetAudioClipName();
+		auto is_playing = audio_source->IsPlaying();
+		auto is_loop = audio_source->IsLoop();
+		auto is_mute = audio_source->IsMute();
+		auto priority = audio_source->GetPriority();
+		auto volume = audio_source->GetVolume();
+		auto pitch = audio_source->GetPitch();
+		auto pan = audio_source->GetPan();
+
+		//Audio Clip
+		ImGui::TextUnformatted("Audio Clip");
+		ImGui::SameLine(140.0f);
+		ImGui::PushItemWidth(250.0f);
+		ImGui::InputText("##AudioClipName", &audio_clip_name, ImGuiInputTextFlags_ReadOnly);
+		ImGui::PopItemWidth();
+
+		if (auto payload = DragDropEvent::ReceiveDragDropPayload(PayloadType::Audio))
+			audio_source->SetAudioClip(std::get<const char*>(payload->data));
+
+		//Playing
+		ImGui::TextUnformatted("Is Playing");
+		ImGui::SameLine(140.0f);
+		ImGui::Checkbox("##AudioPlaying", &is_playing);
+
+		//Loop
+		ImGui::TextUnformatted("Is Loop");
+		ImGui::SameLine(140.0f);
+		ImGui::Checkbox("##AudioLoop", &is_loop);
+
+		//Mute
+		ImGui::TextUnformatted("Is Mute");
+		ImGui::SameLine(140.0f);
+		ImGui::Checkbox("##AudioMute", &is_mute);
+
+		//Priority(우선순위)
+		ImGui::TextUnformatted("Priority");
+		ImGui::SameLine(140.0f);
+		ImGui::SliderInt("##AudioPriority", &priority, 0, 255);
+
+		//Volume
+		ImGui::TextUnformatted("Volume");
+		ImGui::SameLine(140.0f);
+		ImGui::SliderFloat("##AudioVolume", &volume, 0.0f, 1.0f);
+
+		//Pitch
+		ImGui::TextUnformatted("Pitch");
+		ImGui::SameLine(140.0f);
+		ImGui::SliderFloat("##AudioPitch", &pitch, 0.0f, 3.0f);
+
+		//Pan
+		ImGui::TextUnformatted("Pan");
+		ImGui::SameLine(140.0f);
+		ImGui::SliderFloat("##AudioPan", &pan, -1.0f, 1.0f);
+
+		if (is_playing != audio_source->IsPlaying())   audio_source->SetPlaying(is_playing);
+		if (is_loop != audio_source->IsLoop())      audio_source->SetLoop(is_loop);
+		if (is_mute != audio_source->IsMute())      audio_source->SetMute(is_mute);
+		if (priority != audio_source->GetPriority()) audio_source->SetPriority(priority);
+		if (volume != audio_source->GetVolume())   audio_source->SetVolume(volume);
+		if (pitch != audio_source->GetPitch())    audio_source->SetPitch(pitch);
+		if (pan != audio_source->GetPan())      audio_source->SetPan(pan);
+	}
+	Inspector_Data::ComponentEnd();
+}
+
+void Widget_Inspector::ShowAudioListener(std::shared_ptr<class AudioListener>& audio_listener)
+{
+	if (!audio_listener)
+		return;
+
+	if (Inspector_Data::ComponentBegin("AudioListener", IconType::Component_AudioListener, audio_listener))
+	{
+
+	}
+	Inspector_Data::ComponentEnd();
+}
+
 void Widget_Inspector::ShowAddComponentButton()
 {
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 50.0f);
@@ -352,6 +444,16 @@ void Widget_Inspector::ShowComponentPopup()
 		{
 			if (ImGui::MenuItem("Script"))
 				actor->AddComponent<Script>();
+
+			if (ImGui::BeginMenu("Audio"))
+			{
+				if (ImGui::MenuItem("AudioSource"))
+					actor->AddComponent<AudioSource>();
+				if (ImGui::MenuItem("AudioListener"))
+					actor->AddComponent<AudioListener>();
+				ImGui::EndMenu();
+			}
+
 		}
 
 		ImGui::EndPopup();

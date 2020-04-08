@@ -340,7 +340,7 @@ void FileDialog::ItemDrag(FileDialogItem * item) const
 		if (FileSystem::IsSupportedTextureFile(item->GetPath()))    set_payload(PayloadType::Texture, item->GetPath());
 		if (FileSystem::IsSupportedModelFile(item->GetPath()))     set_payload(PayloadType::Model, item->GetPath());
 		if (FileSystem::IsSupportedScriptFile(item->GetPath()))     set_payload(PayloadType::Script, item->GetPath());
-
+		if (FileSystem::IsSupportedAudioFile(item->GetPath()))      set_payload(PayloadType::Audio, item->GetPath());
 
 		ImGui::Image(item->GetTexture()->GetShaderResourceView(), ImVec2(50.0f, 50.0f));
 

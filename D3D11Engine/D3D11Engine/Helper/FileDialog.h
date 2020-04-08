@@ -108,7 +108,7 @@ private:
     std::function<void(const std::string&)> on_item_clicked;
     std::function<void(const std::string&)> on_item_double_clicked;
 
-	//°úÁ¦
+
 	bool is_change_script_name = false;
 	bool is_change = false;
 	class Input* input = nullptr; 

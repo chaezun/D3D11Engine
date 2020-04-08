@@ -5,6 +5,7 @@
 enum class ResourceType :uint
 {
 	Unknown,
+	AudioClip,
 	Texture2D,
 	Texture3D,
 	TextureCube,

@@ -74,6 +74,10 @@
     <ClInclude Include="Utility\Log\Engine_Logger.h" />
     <ClInclude Include="Utility\Log\ILogger.h" />
     <ClInclude Include="Utility\Log\Log.h" />
+    <ClInclude Include="Core\Subsystem\Audio.h" />
+    <ClInclude Include="Resource\AudioClip.h" />
+    <ClInclude Include="Scene\Component\AudioListener.h" />
+    <ClInclude Include="Scene\Component\AudioSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D11Framework.cpp" />
@@ -138,6 +142,10 @@
     <ClCompile Include="Core\D3D11Graphics\Shader\VertexShader.cpp" />
     <ClCompile Include="Core\D3D11Graphics\CommandList.cpp" />
     <ClCompile Include="Utility\Log\Log.cpp" />
+    <ClCompile Include="Core\Subsystem\Audio.cpp" />
+    <ClCompile Include="Resource\AudioClip.cpp" />
+    <ClCompile Include="Scene\Component\AudioListener.cpp" />
+    <ClCompile Include="Scene\Component\AudioSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="NatvisFile.natvis" />

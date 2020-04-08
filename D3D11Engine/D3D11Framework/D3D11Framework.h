@@ -73,6 +73,7 @@ typedef unsigned long ulong;
 //Subsystem
 #include "Core/Subsystem/Timer.h"
 #include "Core/Subsystem/Input.h"
+#include "Core/Subsystem/Audio.h"
 #include "Core/Subsystem/Graphics.h"
 #include "Core/Subsystem/Thread.h"
 #include "Core/Subsystem/Scripting.h"
@@ -101,6 +102,7 @@ typedef unsigned long ulong;
 #include "Shader/Shader.h"
 
 //Resource
+#include "Resource/AudioClip.h"
 #include "Resource/Texture2D.h"
 #include "Resource/Mesh.h"
 #include "Resource/Material.h"

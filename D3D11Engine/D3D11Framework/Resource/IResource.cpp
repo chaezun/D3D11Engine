@@ -18,6 +18,7 @@ constexpr ResourceType IResource::DeduceResourceType()
 
 #define REGISTER_RESOURCE_TYPE(T, enum_type) template<> ResourceType IResource::DeduceResourceType<T>() { return enum_type;}
 
+REGISTER_RESOURCE_TYPE(AudioClip, ResourceType::AudioClip)
 REGISTER_RESOURCE_TYPE(Texture2D,ResourceType::Texture2D)
 REGISTER_RESOURCE_TYPE(Material, ResourceType::Material)
 REGISTER_RESOURCE_TYPE(Mesh,     ResourceType::Mesh)

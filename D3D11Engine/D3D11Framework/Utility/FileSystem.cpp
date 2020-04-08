@@ -90,6 +90,31 @@ std::vector<std::string> FileSystem::supported_script_formats
 	".as",
 };
 
+std::vector<std::string> FileSystem::supported_audio_formats
+{
+	".aiff",
+	".asf",
+	".asx",
+	".dls",
+	".flac",
+	".fsb",
+	".it",
+	".m3u",
+	".midi",
+	".mod",
+	".mp2",
+	".mp3",
+	".ogg",
+	".pls",
+	".s3m",
+	".vag", // PS2/PSP
+	".wav",
+	".wax",
+	".wma",
+	".xm",
+	".xma" // XBOX 360
+};
+
 void FileSystem::OpenDirectoryWindow(const std::string & directory)
 {
 	ShellExecuteA(nullptr, nullptr, nullptr, nullptr, directory.c_str(), SW_SHOW);
@@ -415,6 +440,20 @@ auto FileSystem::IsSupportedScriptFile(const std::string & path) -> const bool
 {
 	auto file_extension = GetExtensionFromPath(path);
 	auto supported_formats = GetSupportedScriptFormats();
+
+	for (const auto& format : supported_formats)
+	{
+		if (file_extension == format || file_extension == ToUppercase(format))
+			return true;
+	}
+
+	return false;
+}
+
+auto FileSystem::IsSupportedAudioFile(const std::string & path) -> const bool
+{
+	auto file_extension = GetExtensionFromPath(path);
+	auto supported_formats = GetSupportedAudioFormats();
 
 	for (const auto& format : supported_formats)
 	{

@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)..\..\_Libraries\FreeImage_3.18.0\;$(SolutionDir)..\..\_Libraries\Assimp_5.0.0\;$(SolutionDir)..\..\_Libraries\AngelScript_2.33.0\;$(SolutionDir)..\..\_Libraries\Bullet_2.88\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)..\..\_Libraries\FreeImage_3.18.0\;$(SolutionDir)..\..\_Libraries\Assimp_5.0.0\;$(SolutionDir)..\..\_Libraries\AngelScript_2.33.0\;$(SolutionDir)..\..\_Libraries\Bullet_2.88\;$(SolutionDir)..\..\_Libraries\FMOD_1.10.10\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>D3D11Framework.h</PrecompiledHeaderFile>
@@ -117,7 +117,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\_Libraries\Lib_x64\;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImageLib_debug.lib;assimp_debug.lib;IrrXML_debug.lib;angelscript_debug.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;BulletSoftBody_debug.lib;LinearMath_debug.lib</AdditionalDependencies>
+      <AdditionalDependencies>FreeImageLib_debug.lib;assimp_debug.lib;IrrXML_debug.lib;angelscript_debug.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;BulletSoftBody_debug.lib;LinearMath_debug.lib;fmodL64_vc.lib</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
       <Command>move /Y "$(OutDir)$(ProjectName).lib" "..\..\..\_Libraries\Lib_x64\"</Command>
@@ -180,6 +180,7 @@
     <ClInclude Include="Core\D3D11Graphics\Shader\VertexShader.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EventSystem\EventSystem.h" />
+    <ClInclude Include="Core\Subsystem\Audio.h" />
     <ClInclude Include="Core\Subsystem\Graphics.h" />
     <ClInclude Include="Core\Settings.h" />
     <ClInclude Include="Core\Subsystem\Input.h" />
@@ -193,6 +194,9 @@
     <ClInclude Include="Core\Window.h" />
     <ClInclude Include="D3D11Framework.h" />
     <ClInclude Include="Gizmo\Grid.h" />
+    <ClInclude Include="Resource\AudioClip.h" />
+    <ClInclude Include="Scene\Component\AudioListener.h" />
+    <ClInclude Include="Scene\Component\AudioSource.h" />
     <ClInclude Include="Utility\Log\Engine_Logger.h" />
     <ClInclude Include="Utility\Log\ILogger.h" />
     <ClInclude Include="Utility\Log\Log.h" />
@@ -248,6 +252,7 @@
     <ClCompile Include="Core\D3D11Graphics\Shader\SamplerState.cpp" />
     <ClCompile Include="Core\D3D11Graphics\Shader\VertexShader.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
+    <ClCompile Include="Core\Subsystem\Audio.cpp" />
     <ClCompile Include="Core\Subsystem\Graphics.cpp" />
     <ClCompile Include="Core\Subsystem\Input.cpp" />
     <ClCompile Include="Core\Subsystem\Renderer.cpp" />
@@ -262,6 +267,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Gizmo\Grid.cpp" />
+    <ClCompile Include="Resource\AudioClip.cpp" />
+    <ClCompile Include="Scene\Component\AudioListener.cpp" />
+    <ClCompile Include="Scene\Component\AudioSource.cpp" />
     <ClCompile Include="Utility\Log\Log.cpp" />
     <ClCompile Include="Math\BoundBox.cpp" />
     <ClCompile Include="Math\Color4.cpp" />

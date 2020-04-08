@@ -11,7 +11,8 @@ enum class ComponentType : uint
 	Terrain,
 	Light,
 	Collider,
-	Audto,
+	AudioSource,
+	AudioListener,
 	RigidBody,
 	Constraint,
 };
