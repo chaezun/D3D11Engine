@@ -1,10 +1,23 @@
 #pragma once
 
+struct ModelParameter final
+{
+	const struct aiScene* scene = nullptr;
+	class Model* model = nullptr;
+	std::string path = "";
+	std::string name = "";
+	uint triangle_limit = 0;
+	uint vertex_limit = 0;
+	float max_normal_smoothing_angle = 0.0f;
+	float max_tangent_smoothing_angle = 0.0f;
+	bool has_animation = false;
+};
+
 class ModelImporter final
 {
 public:
 	ModelImporter(class Context* context);
-	~ModelImporter();
+	~ModelImporter() = default;
 
 	auto Load(class Model* model, const std::string& path) -> const bool;
 
@@ -36,6 +49,6 @@ private:
 private:
    class Context* context            = nullptr;
    class SceneManager* scene_manager = nullptr;
-   std::string model_path            = "";
+  
    int assimp_flags                  = 0;
 };

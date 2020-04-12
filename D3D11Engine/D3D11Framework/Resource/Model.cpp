@@ -17,6 +17,8 @@ Model::~Model()
 
     materials.clear();
     materials.shrink_to_fit();
+
+	animations.clear();
 }
 
 const bool Model::SaveToFile(const std::string & path)
@@ -142,6 +144,38 @@ void Model::AddMesh(const std::vector<VertexTextureNormalTangent>& vertices, con
 
 
     AddMesh(mesh, renderable);
+}
+
+void Model::AddBone(const std::string & name, const int & parent_index, const Matrix & offset)
+{
+}
+
+void Model::AddBone(const Bone & bone)
+{
+}
+
+auto Model::FindBone(const uint & bone_index) const -> Bone *
+{
+	return nullptr;
+}
+
+auto Model::FindBone(const std::string & name) const -> Bone *
+{
+	return nullptr;
+}
+
+auto Model::FindBoneIndex(const std::string & name) const -> const int
+{
+	return 0;
+}
+
+void Model::AddAnimation(const std::string & name, const std::shared_ptr<Animation>& animation)
+{
+}
+
+auto Model::FindAnimation(const std::string & name) -> const std::shared_ptr<Animation>
+{
+	return std::shared_ptr<Animation>();
 }
 
 void Model::SetWorkingDirectories(const std::string & directory)

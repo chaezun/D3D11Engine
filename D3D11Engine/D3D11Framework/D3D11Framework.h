@@ -106,4 +106,6 @@ typedef unsigned long ulong;
 #include "Resource/Texture2D.h"
 #include "Resource/Mesh.h"
 #include "Resource/Material.h"
+#include "Resource/Skeleton.h"
+#include "Resource/Animation.h"
 #include "Resource/Model.h"

@@ -12,6 +12,8 @@ enum class ResourceType :uint
 	Model,
 	Mesh,
 	Material,
+	Skeleton,
+	Animation,
 };
 
 class IResource : public D3D11_Object

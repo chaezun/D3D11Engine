@@ -194,7 +194,9 @@
     <ClInclude Include="Core\Window.h" />
     <ClInclude Include="D3D11Framework.h" />
     <ClInclude Include="Gizmo\Grid.h" />
+    <ClInclude Include="Resource\Animation.h" />
     <ClInclude Include="Resource\AudioClip.h" />
+    <ClInclude Include="Resource\Skeleton.h" />
     <ClInclude Include="Scene\Component\AudioListener.h" />
     <ClInclude Include="Scene\Component\AudioSource.h" />
     <ClInclude Include="Utility\Log\Engine_Logger.h" />
@@ -267,7 +269,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Gizmo\Grid.cpp" />
+    <ClCompile Include="Resource\Animation.cpp" />
     <ClCompile Include="Resource\AudioClip.cpp" />
+    <ClCompile Include="Resource\Skeleton.cpp" />
     <ClCompile Include="Scene\Component\AudioListener.cpp" />
     <ClCompile Include="Scene\Component\AudioSource.cpp" />
     <ClCompile Include="Utility\Log\Log.cpp" />

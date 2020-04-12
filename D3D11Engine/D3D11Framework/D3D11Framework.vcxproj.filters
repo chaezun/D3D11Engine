@@ -78,6 +78,8 @@
     <ClInclude Include="Resource\AudioClip.h" />
     <ClInclude Include="Scene\Component\AudioListener.h" />
     <ClInclude Include="Scene\Component\AudioSource.h" />
+    <ClInclude Include="Resource\Animation.h" />
+    <ClInclude Include="Resource\Skeleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D11Framework.cpp" />
@@ -146,6 +148,8 @@
     <ClCompile Include="Resource\AudioClip.cpp" />
     <ClCompile Include="Scene\Component\AudioListener.cpp" />
     <ClCompile Include="Scene\Component\AudioSource.cpp" />
+    <ClCompile Include="Resource\Animation.cpp" />
+    <ClCompile Include="Resource\Skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="NatvisFile.natvis" />

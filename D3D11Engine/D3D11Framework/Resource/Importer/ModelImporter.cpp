@@ -59,24 +59,37 @@ ModelImporter::ModelImporter(Context * context)
    aiProcess_ConvertToLeftHanded : 왼손 좌표계로 변환
 */
 
-ModelImporter::~ModelImporter()
+auto ModelImporter::Load(Model * model, const std::string & path) -> const bool 
 {
+	if (!model || !context)
+	{
+		LOG_ERROR("Invaild parameter");
+		return false;
+	}
 
-}
+	//ModelParameter 초기화
+	//=====================================================================
+	ModelParameter parameter;
+	parameter.model = model;
+	parameter.name = FileSystem::GetIntactFileNameFromPath(path);
+	parameter.path = path;
+	parameter.triangle_limit = 1'000'000;
+	parameter.vertex_limit = 1'000'000;
+	parameter.max_normal_smoothing_angle = 80.0f;
+	parameter.max_tangent_smoothing_angle = 80.0f;
+	//=====================================================================
 
-auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
-{
-	model_path = FileSystem::GetRelativeFromPath(path);
-
+	//Assimp Importer Setting
+	//===================================================================================================================
 	Assimp::Importer importer;
 	//aiProcess_GenSmoothNormals 사용
-	importer.SetPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 80.0f);
+	importer.SetPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, parameter.max_normal_smoothing_angle);
 	//aiProcess_CalcTangentSpace 사용
-	importer.SetPropertyFloat(AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE, 80.0f);
+	importer.SetPropertyFloat(AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE, parameter.max_tangent_smoothing_angle);
 	//aiProcess_SplitLargeMeshes 사용(Mesh)
-	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, 1'000'000);
+	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, parameter.triangle_limit);
 	//aiProcess_SplitLargeMeshes 사용(Vertext)
-	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 1'000'000);
+	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, parameter.vertex_limit);
 	//점과 선은 사용하지 않음
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
 	//카메라와 조명 정보는 사용하지않음
@@ -84,11 +97,32 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 	//데이터를 불러오는데 걸리는 시간을 화면에 띄움
 	importer.SetPropertyBool(AI_CONFIG_GLOB_MEASURE_TIME, true);
 	//프로그래스바 연결
-	importer.SetProgressHandler(new AssimpProgress(model_path));
+	importer.SetProgressHandler(new AssimpProgress(path));
 	//로그 연결
 	Assimp::DefaultLogger::set(new AssimpLogger());
+	//===================================================================================================================
 
-	const auto scene = importer.ReadFile(model_path, assimp_flags);
+
+	if (const auto scene = importer.ReadFile(path, assimp_flags))
+	{
+		parameter.scene = scene;
+		parameter.has_animation = scene->mNumAnimations != 0;
+
+		bool is_active = false;
+		std::shared_ptr<Actor> new_actor = scene_manager->GetCurrentScene()->CreateActor(is_active);
+		new_actor->SetName(parameter.name);
+		new_actor->SetActive(true);
+		parameter.model->SetRootActor(new_actor);
+		parameter.model->SetAnimated(parameter.has_animation);
+
+		int job_count = 0;
+		AssimpHelper::ComputeNodeCount(scene->mRootNode, &job_count);
+		ProgressReport::Get().SetJobCount(ProgressType::Model, job_count);
+
+		ParseNodeHierarchy(scene->mRootNode);
+		ParseNode(scene->mRootNode, parameter, nullptr, new_actor.get());
+		ParseAnimations(parameter);
+	}
 	const auto result = scene != nullptr;
 
 	if (result)
