@@ -13,7 +13,7 @@ public:
 	auto GetActorCount() const -> const uint {return static_cast<uint>(actors.size());}
 	auto GetRootActors() const -> const std::vector<std::shared_ptr<class Actor>>;
 
-	auto CreateActor() -> std::shared_ptr<class Actor>;
+	auto CreateActor(const bool& is_active = true) -> std::shared_ptr<class Actor>;
 	void AddActor(const std::shared_ptr<class Actor>& actor);
 	void RemoveActor(const std::shared_ptr<class Actor>& actor);
 

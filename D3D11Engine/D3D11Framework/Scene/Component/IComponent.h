@@ -13,6 +13,7 @@ enum class ComponentType : uint
 	Collider,
 	AudioSource,
 	AudioListener,
+	Animator,
 	RigidBody,
 	Constraint,
 };

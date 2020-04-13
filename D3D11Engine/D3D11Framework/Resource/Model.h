@@ -48,8 +48,8 @@ public:
 	auto GetAnimations() const -> const std::map<std::string, std::shared_ptr<Animation>>& { return animations; }
 	void AddAnimation(const std::string& name, const std::shared_ptr<Animation>& animation);
 	auto FindAnimation(const std::string& name) -> const std::shared_ptr<Animation>;
-	auto IsAnimated() const { return is_animated; }
-	void SetAnimated(const bool& is_animated) { this->is_animated = is_animated; }
+	auto GetHasAnimation() const { return has_animation; }
+	void SetHasAnimation(const bool& has_animation) { this->has_animation = has_animation; }
 
 	//=================================================================================================
 	// [Directory]
@@ -68,9 +68,12 @@ private:
     std::shared_ptr<class Actor> root_actor;
 
 	std::vector<std::shared_ptr<Mesh>> meshes;
+
 	std::vector<std::shared_ptr<Material>> materials;
+
 	std::map<std::string, std::shared_ptr<Animation>> animations;
 	std::shared_ptr<Skeleton> skeleton;
+	bool has_animation       = false;
 
     std::string model_directory="";
 	std::string mesh_directory = "";
@@ -79,6 +82,5 @@ private:
 	std::string animation_directory = "";
 
 	BoundBox bound_box;
-	float normalize_scale          =1.0f;
-	bool is_animated               =false;
+	float normalize_scale    = 1.0f;
 };

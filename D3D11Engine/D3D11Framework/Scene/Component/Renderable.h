@@ -1,6 +1,7 @@
 #pragma once
 #include "IComponent.h"
 
+//Rendering에 관련된 Mesh, Material, BoundBox, Animation 등을 등록하는 클래스
 class Renderable final : public IComponent
 {
 public:
@@ -34,16 +35,21 @@ public:
 	void SetMesh(const std::string& name, const std::vector<struct VertexTextureNormalTangent>& vertices, const std::vector<uint>& indices, const D3D11_USAGE& usage = D3D11_USAGE_IMMUTABLE);
 	void SetStandardMesh(const MeshType& mesh_type);
 
-
 	//=================================================================================================
 	// [BoundBox]
 	//=================================================================================================
 	auto GetBoundBox() -> const BoundBox;
 	void SetBoundBox(const BoundBox& aabb) { this->aabb = aabb; }
 
+	//=================================================================================================
+	// [Mesh]
+	//=================================================================================================
+	auto GetHasAnimation() const { return has_animation; }
+	void SetHasAnimation(const bool& has_animation) { this->has_animation = has_animation; }
+
 private:
    std::shared_ptr<Material> material;
    std::shared_ptr<Mesh> mesh;
-
    BoundBox aabb;
-};
+   bool has_animation = false;
+}; 

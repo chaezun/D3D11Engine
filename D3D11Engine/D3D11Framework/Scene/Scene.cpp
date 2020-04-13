@@ -37,12 +37,11 @@ auto Scene::GetRootActors() const -> const std::vector<std::shared_ptr<class Act
 	return root_actors;
 }
 
-auto Scene::CreateActor() -> std::shared_ptr<class Actor>
+auto Scene::CreateActor(const bool& is_active = true) -> std::shared_ptr<class Actor>
 {
 	auto actor = std::make_shared<Actor>(context);
-
-	actor->Initialize(actor->AddComponent<Transform>());
-
+	actor->SetActive(is_active);
+	//actor->Initialize(actor->AddComponent<Transform>());
 	AddActor(actor);
 
 	return actor;

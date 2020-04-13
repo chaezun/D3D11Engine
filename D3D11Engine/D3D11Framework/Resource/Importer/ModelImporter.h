@@ -22,6 +22,17 @@ public:
 	auto Load(class Model* model, const std::string& path) -> const bool;
 
 private:
+	//Parsing
+	void ParseNodeHierarchy(struct aiNode* assimp_node);
+	void ParseNode(const struct aiNode* assimp_node, const ModelParameter& parameter, class Actor* parent_node = nullptr, class Actor* new_actor = nullptr);
+	void ParseNodeMeshes(const struct aiNode* assimp_node, class Actor* new_actor, const ModelParameter& parameter);
+	void ParseAnimations(const ModelParameter& parameter);
+
+	//Loading
+	void LoadMesh(struct aiMesh* assimp_mesh, class Actor* parent_actor, const ModelParameter& parameter);
+	void LoadBone(const struct aiMesh* assimp_mesh, const ModelParameter& parameter, std::vector<AnimationVertexWeights>& vertex_weights);
+	auto LoadMaterial(struct aiMaterial* assimp_material, const ModelParameter& parameter)->std::shared_ptr<class Material>;
+
     void ReadNodeHierarchy
 	(
 	   const struct aiScene* assimp_scene,
@@ -51,4 +62,8 @@ private:
    class SceneManager* scene_manager = nullptr;
   
    int assimp_flags                  = 0;
+   Matrix global_inverse_transform = Matrix::Identity;
+   uint bone_count = 0;
+   std::vector<struct aiNode*> assimp_nodes;
+   std::map<std::string, uint> bone_mapping;
 };

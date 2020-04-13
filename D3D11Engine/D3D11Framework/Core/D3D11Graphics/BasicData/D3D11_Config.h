@@ -3,11 +3,11 @@
 
 //Config의 사용용도 : 렌더링에 필요한 데이터를 미리 정의하고 사용.
 
-static const std::string NOT_ASSIGNED_STR = "N/A";
-static const std::string MODEL_BIN_EXTENSION = ".model";
-static const std::string MESH_BIN_EXTENSION = ".mesh";
-static const std::string TEXTURE_BIN_EXTENSION = ".texture";
-static const std::string MATERIAL_BIN_EXTENSION = ".material";
+static const std::string NOT_ASSIGNED_STR			= "N/A";
+static const std::string MODEL_BIN_EXTENSION		= ".model";
+static const std::string MESH_BIN_EXTENSION			= ".mesh";
+static const std::string TEXTURE_BIN_EXTENSION		= ".texture";
+static const std::string MATERIAL_BIN_EXTENSION		= ".material";
 
 enum class ShaderScope : uint
 {
@@ -17,6 +17,10 @@ enum class ShaderScope : uint
 	PS      //Pixel Shader
 };
 
+//ConstantBuffer에 넘겨줄 구조체 변수들
+//=================================================================================================================
+
+//World
 struct GLOBAL_DATA final
 {
 	Matrix world_view_proj;
@@ -33,11 +37,13 @@ struct GLOBAL_DATA final
 	float padding;
 };
 
+//Transform
 struct TRANSFORM_DATA final
 {
     Matrix world;
 };
 
+//Material
 struct MATERIAL_DATA final
 {
 	Color4 albedo_color;
@@ -51,6 +57,7 @@ struct MATERIAL_DATA final
 	float padding[3];
 };
 
+//Ligth
 struct LIGHT_DATA final
 {
 	Vector3 color;
@@ -64,10 +71,11 @@ struct LIGHT_DATA final
 	float padding[2];
 };
 
-struct TERRAIN_DATA final
+//Animation
+#define MAX_BONE_COUNT 100
+struct ANIMATION_DATA final
 {
-	Vector3 brush_position;
-	int brush_type;
-	Vector3 brush_color;
-	float brush_range;
+	Matrix skinned_transforms[MAX_BONE_COUNT];
 };
+
+//=================================================================================================================

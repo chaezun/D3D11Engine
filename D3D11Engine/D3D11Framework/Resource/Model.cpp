@@ -3,6 +3,7 @@
 #include "Scene/Actor.h"
 #include "Scene/Component/Transform.h"
 #include "Scene/Component/Renderable.h"
+#include "Scene/Component/Animator.h"
 #include "Importer/ModelImporter.h"
 
 Model::Model(Context * context)
@@ -39,6 +40,15 @@ const bool Model::LoadFromFile(const std::string & path)
 		normalize_scale = ComputeNormalizedScale();
 		root_actor->GetTransform()->SetScale(normalize_scale);
 		root_actor->GetTransform()->UpdateTransform();
+
+		if (has_animation)
+		{
+			auto animator = root_actor->AddComponent<Animator>();
+			animator->SetAnimations(animations);
+			animator->SetSkeleton(skeleton);
+
+			animator->SetCurrentAnimation("mixamo.com");
+		}
 
         SaveToFile(resource_path);
         return true;
@@ -148,34 +158,75 @@ void Model::AddMesh(const std::vector<VertexTextureNormalTangent>& vertices, con
 
 void Model::AddBone(const std::string & name, const int & parent_index, const Matrix & offset)
 {
+   if(!skeleton)
+     skeleton = std::make_shared<Skeleton>(context);
+
+   skeleton->AddBone(name, parent_index, offset);
 }
 
 void Model::AddBone(const Bone & bone)
 {
+	if (!skeleton)
+		skeleton = std::make_shared<Skeleton>(context);
+
+	skeleton->AddBone(bone);
 }
 
 auto Model::FindBone(const uint & bone_index) const -> Bone *
 {
-	return nullptr;
+	if (!skeleton)
+	{
+		LOG_ERROR("Skeleton is nullptr");
+		return nullptr;
+	}
+
+	return skeleton->FindBone(bone_index);
 }
 
 auto Model::FindBone(const std::string & name) const -> Bone *
 {
-	return nullptr;
+	if (!skeleton)
+	{
+		LOG_ERROR("Skeleton is nullptr");
+		return nullptr;
+	}
+
+	return skeleton->FindBone(name);
 }
 
 auto Model::FindBoneIndex(const std::string & name) const -> const int
 {
-	return 0;
+	if (!skeleton)
+	{
+		LOG_ERROR("Skeleton is nullptr");
+		return -1;
+	}
+
+	return skeleton->FindBoneIndex(name);
 }
 
 void Model::AddAnimation(const std::string & name, const std::shared_ptr<Animation>& animation)
 {
+	if (animations.find(name) != animations.end())
+	{
+		LOG_ERROR("animation name is overlap");
+		return;
+	}
+
+	animation->SetSkeleton(skeleton);
+	animation->SortAnimationNodes(skeleton);
+	animations[name] = animation;
 }
 
 auto Model::FindAnimation(const std::string & name) -> const std::shared_ptr<Animation>
 {
-	return std::shared_ptr<Animation>();
+	if (animations.find(name) == animations.end())
+	{
+		LOG_ERROR("animation is not found");
+		return nullptr;
+	}
+
+	return animations[name];
 }
 
 void Model::SetWorkingDirectories(const std::string & directory)
@@ -189,6 +240,7 @@ void Model::SetWorkingDirectories(const std::string & directory)
     FileSystem::Create_Directory(material_directory);
     FileSystem::Create_Directory(mesh_directory);
     FileSystem::Create_Directory(texture_directory);
+	FileSystem::Create_Directory(animation_directory);
 }
 
 auto Model::ComputeNormalizedScale() const -> const float

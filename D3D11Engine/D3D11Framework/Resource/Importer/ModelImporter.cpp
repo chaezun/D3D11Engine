@@ -102,7 +102,7 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 	Assimp::DefaultLogger::set(new AssimpLogger());
 	//===================================================================================================================
 
-
+	//Assimp Importer에서 경로상의 파일을 읽어 aiScene을 반환
 	if (const auto scene = importer.ReadFile(path, assimp_flags))
 	{
 		parameter.scene = scene;
@@ -113,7 +113,7 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 		new_actor->SetName(parameter.name);
 		new_actor->SetActive(true);
 		parameter.model->SetRootActor(new_actor);
-		parameter.model->SetAnimated(parameter.has_animation);
+		parameter.model->SetHasAnimation(parameter.has_animation);
 
 		int job_count = 0;
 		AssimpHelper::ComputeNodeCount(scene->mRootNode, &job_count);
@@ -123,18 +123,43 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 		ParseNode(scene->mRootNode, parameter, nullptr, new_actor.get());
 		ParseAnimations(parameter);
 	}
-	const auto result = scene != nullptr;
-
-	if (result)
-		ReadNodeHierarchy(scene, scene->mRootNode, model);
-
+	
 	else
 		LOG_ERROR_F("%s", importer.GetErrorString());
 
 	//동적할당한 부분을 삭제
 	importer.FreeScene();
 
-	return result;
+	return parameter.scene != nullptr;
+}
+
+void ModelImporter::ParseNodeHierarchy(aiNode * assimp_node)
+{
+}
+
+void ModelImporter::ParseNode(const aiNode * assimp_node, const ModelParameter & parameter, Actor * parent_node, Actor * new_actor)
+{
+}
+
+void ModelImporter::ParseNodeMeshes(const aiNode * assimp_node, Actor * new_actor, const ModelParameter & parameter)
+{
+}
+
+void ModelImporter::ParseAnimations(const ModelParameter & parameter)
+{
+}
+
+void ModelImporter::LoadMesh(aiMesh * assimp_mesh, Actor * parent_actor, const ModelParameter & parameter)
+{
+}
+
+void ModelImporter::LoadBone(const aiMesh * assimp_mesh, const ModelParameter & parameter, std::vector<AnimationVertexWeights>& vertex_weights)
+{
+}
+
+auto ModelImporter::LoadMaterial(aiMaterial * assimp_material, const ModelParameter & parameter) -> std::shared_ptr<class Material>
+{
+	return std::shared_ptr<class Material>();
 }
 
 void ModelImporter::ReadNodeHierarchy(const aiScene * assimp_scene, aiNode * assimp_node, Model * model, Actor * parent_actor, Actor * new_actor)

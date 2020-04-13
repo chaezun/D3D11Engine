@@ -197,6 +197,7 @@
     <ClInclude Include="Resource\Animation.h" />
     <ClInclude Include="Resource\AudioClip.h" />
     <ClInclude Include="Resource\Skeleton.h" />
+    <ClInclude Include="Scene\Component\Animator.h" />
     <ClInclude Include="Scene\Component\AudioListener.h" />
     <ClInclude Include="Scene\Component\AudioSource.h" />
     <ClInclude Include="Utility\Log\Engine_Logger.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="Resource\Animation.cpp" />
     <ClCompile Include="Resource\AudioClip.cpp" />
     <ClCompile Include="Resource\Skeleton.cpp" />
+    <ClCompile Include="Scene\Component\Animator.cpp" />
     <ClCompile Include="Scene\Component\AudioListener.cpp" />
     <ClCompile Include="Scene\Component\AudioSource.cpp" />
     <ClCompile Include="Utility\Log\Log.cpp" />

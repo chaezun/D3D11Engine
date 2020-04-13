@@ -8,6 +8,7 @@
 #include "Scene/Component/Renderable.h"
 #include "Scene/Component/Camera.h"
 #include "Scene/Component/Light.h"
+#include "Scene/Component/Animator.h"
 
 void Renderer::PassMain()
 {

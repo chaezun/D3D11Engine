@@ -9,6 +9,7 @@
 #include "Script.h"
 #include "AudioSource.h"
 #include "AudioListener.h"
+#include "Animator.h"
 
 IComponent::IComponent(Context * context, Actor * actor, Transform * transform)
 : context(context),
@@ -42,3 +43,4 @@ REGISTER_COMPONENT_TYPE(SkyBox, ComponentType::SkyBox);
 REGISTER_COMPONENT_TYPE(Script, ComponentType::Script);
 REGISTER_COMPONENT_TYPE(AudioSource, ComponentType::AudioSource)
 REGISTER_COMPONENT_TYPE(AudioListener, ComponentType::AudioListener)
+REGISTER_COMPONENT_TYPE(Animator, ComponentType::Animator)
