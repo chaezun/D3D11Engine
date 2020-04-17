@@ -64,23 +64,23 @@ auto AssimpHelper::ToMatrix(const aiMatrix4x4 & value) -> const Matrix
 	);
 }
 
-void AssimpHelper::ComputeNodeCount(aiNode * node, int * count)
+void AssimpHelper::ComputeNodeCount(const aiNode * node, int * count)
 {
    if(!node)
       return;
 
    *count++;
 
-   for(uint i=0;i<node->mNumChildren; i++)
+   for(uint i = 0; i < node->mNumChildren; i++)
 	   ComputeNodeCount(node->mChildren[i],count);
 }
 
-void AssimpHelper::ComputeActorTransform(aiNode * node, Actor * actor)
+void AssimpHelper::ComputeActorTransform(const aiNode * node, Actor * actor)
 {
 	if (!node||!actor)
 	  return;
 
-    auto matrix=ToMatrix(node->mTransformation);
+    auto matrix = ToMatrix(node->mTransformation);
 
 	actor->GetTransform()->SetLocalScale(matrix.GetScale());
 	actor->GetTransform()->SetLocalRotation(matrix.GetRotation());

@@ -25,12 +25,12 @@ void Renderer::CreateShaders()
 
 	//Vertex Shader
 	auto vs_standard = std::make_shared<Shader>(context);
-	vs_standard->AddShader<VertexShader>(shader_directory + "Prev/" + "Standard.hlsl");
+	vs_standard->AddShader<VertexShader>(shader_directory + "Prev/" + "PixelShader.hlsl");
 	shaders[ShaderType::VS_STANDARD] = vs_standard;
 
 	//Pixel Shader
 	auto ps_standard = std::make_shared<Shader>(context);
-	ps_standard->AddShader<PixelShader>(shader_directory + "Prev/"+ "Standard.hlsl");
+	ps_standard->AddShader<PixelShader>(shader_directory + "Prev/"+ "PixelShader.hlsl");
 	shaders[ShaderType::PS_STANDARD] = ps_standard;
 
 	//Vertex Pixel Shader

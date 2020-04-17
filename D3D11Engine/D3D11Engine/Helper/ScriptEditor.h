@@ -21,7 +21,6 @@ public:
 	auto IsVisible() const -> const bool& { return is_visible; }
 	void SetVisible(const bool& is_visible) { this->is_visible = is_visible; }
 
-	//과제
 	auto GetScriptDirectory() -> const std::string& { return current_directory; }
 
 private:
@@ -34,6 +33,5 @@ private:
     std::string path = "";
 	bool is_visible = false;
 
-	//과제
 	std::string current_directory = "";
 };

@@ -25,7 +25,7 @@ auto Standard_Shader::GetMatching_StandardShader(Context * context, const uint &
 
 		auto directory = context->GetSubsystem<ResourceManager>()->GetAssetDirectory(AssetType::Shader);
 
-		shader->AddShader<PixelShader>(directory + "Prev/Standard.hlsl");
+		shader->AddShader<PixelShader>(directory + "Prev/PixelShader.hlsl");
 	}
 
 	return shader;

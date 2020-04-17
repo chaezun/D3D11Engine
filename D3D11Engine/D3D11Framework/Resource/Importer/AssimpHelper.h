@@ -3,7 +3,7 @@
 //속성 -> c/c++ -> 경고수준 
 //경고수준을 잠깐 0으로 설정
 #pragma warning(push,0)
-//Assimp Library
+//Assimp(Open Asset Import Library) Library
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/ProgressHandler.hpp>
@@ -22,8 +22,8 @@ public:
    static auto ToQuaternion(const aiQuaternion& value) -> const Quaternion;
    static auto ToMatrix(const aiMatrix4x4& value) -> const Matrix;
 
-   static void ComputeNodeCount(aiNode* node, int* count);
-   static void ComputeActorTransform(aiNode* node, class Actor* actor);
+   static void ComputeNodeCount(const aiNode* node, int* count);
+   static void ComputeActorTransform(const aiNode* node, class Actor* actor);
 
    static auto Try_Multi_Extension(const std::string& path) -> const std::string;
    static auto ValidatePath(const std::string& original_path, const std::string& model_path) -> const std::string;

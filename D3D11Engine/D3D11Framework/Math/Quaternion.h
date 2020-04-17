@@ -18,6 +18,8 @@ public:
     static const Quaternion QuaternionFromLookRotation(const class Vector3& direction, const class Vector3& up = Vector3::Up);
     static const Quaternion QuaternionFromInverse(const Quaternion& rhs);
 
+	static const Quaternion Slerp(const Quaternion& lhs, const Quaternion& rhs, const float& factor);
+
 public:
     Quaternion();
     Quaternion(const float& x, const float& y, const float& z, const float& w);

@@ -45,8 +45,8 @@ struct VertexTextureNormalTangent final
 		, uv(0, 0)
 		, normal(0, 0, 0)
 		, tangent(0, 0, 0)
-		, splat_color(0.0f)
-		, terrain_color(0.0f)
+		, indices(0.0f)
+		, weights(0.0f)
 	{}
 
 	VertexTextureNormalTangent(const Vector3& position, const Vector2& uv)
@@ -54,25 +54,25 @@ struct VertexTextureNormalTangent final
 		, uv(uv)
 		, normal(0.0f)
 		, tangent(0.0f)
-		, splat_color(0.0f)
-		, terrain_color(0.0f)
+		, indices(0.0f)
+		, weights(0.0f)
 	{}
 
-	VertexTextureNormalTangent(const Vector3& position, const Vector2& uv, const Vector3& normal, const Vector3& tangent)
+	VertexTextureNormalTangent(const Vector3& position, const Vector2& uv, const Vector3& normal, const Vector3& tangent, const Vector4& indices, const Vector4& weights)
 		: position(position)
 		, uv(uv)
 		, normal(normal)
 		, tangent(tangent)
-		, splat_color(0.0f)
-		, terrain_color(0.0f)
+		, indices(0.0f)
+		, weights(0.0f)
 	{}
 
 	Vector3 position;
 	Vector2 uv;
 	Vector3 normal;
 	Vector3 tangent;
-	Color4 splat_color;
-	Color4 terrain_color;
+	Vector4 indices;
+	Vector4 weights;
 
 	static D3D11_INPUT_ELEMENT_DESC descs[];
 	static const uint count = 6;

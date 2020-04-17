@@ -20,7 +20,7 @@ enum class ShaderScope : uint
 //ConstantBuffer에 넘겨줄 구조체 변수들
 //=================================================================================================================
 
-//World
+//World Conversion
 struct GLOBAL_DATA final
 {
 	Matrix world_view_proj;

@@ -1,5 +1,6 @@
 #pragma once
 
+//aiScene객체에는 모델의 material, mesh들이 포함되어 있음.
 struct ModelParameter final
 {
 	const struct aiScene* scene = nullptr;
@@ -32,6 +33,9 @@ private:
 	void LoadMesh(struct aiMesh* assimp_mesh, class Actor* parent_actor, const ModelParameter& parameter);
 	void LoadBone(const struct aiMesh* assimp_mesh, const ModelParameter& parameter, std::vector<AnimationVertexWeights>& vertex_weights);
 	auto LoadMaterial(struct aiMaterial* assimp_material, const ModelParameter& parameter)->std::shared_ptr<class Material>;
+
+private:
+	auto FindAssimpNode(const std::string& node_name) -> struct aiNode*;
 
     void ReadNodeHierarchy
 	(

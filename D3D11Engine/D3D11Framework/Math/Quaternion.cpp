@@ -130,6 +130,49 @@ const Quaternion Quaternion::QuaternionFromInverse(const Quaternion & rhs)
     );
 }
 
+const Quaternion Quaternion::Slerp(const Quaternion & lhs, const Quaternion & rhs, const float & factor)
+{
+	// calc cosine theta
+	float cosom = lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
+
+	// adjust signs (if necessary)
+	Quaternion end = rhs;
+	if (cosom < 0.0f)
+	{
+		cosom = -cosom;
+		end.x = -end.x;   // Reverse all signs
+		end.y = -end.y;
+		end.z = -end.z;
+		end.w = -end.w;
+	}
+
+	// Calculate coefficients
+	float sclp, sclq;
+	if ((1.0f - cosom) > 0.0001f) // 0.0001 -> some epsillon
+	{
+		// Standard case (slerp)
+		float omega, sinom;
+		omega = std::acos(cosom); // extract theta from dot product's cos theta
+		sinom = std::sin(omega);
+		sclp = std::sin((1.0f - factor) * omega) / sinom;
+		sclq = std::sin(factor * omega) / sinom;
+	}
+	else
+	{
+		// Very close, do linear interp (because it's faster)
+		sclp = 1.0f - factor;
+		sclq = factor;
+	}
+
+	return Quaternion
+	(
+		sclp * lhs.x + sclq * end.x,
+		sclp * lhs.y + sclq * end.y,
+		sclp * lhs.z + sclq * end.z,
+		sclp * lhs.w + sclq * end.w
+	);
+}
+
 Quaternion::Quaternion()
     : x(0.0f)
     , y(0.0f)

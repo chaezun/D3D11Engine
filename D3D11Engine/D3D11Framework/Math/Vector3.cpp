@@ -72,6 +72,16 @@ auto Vector3::TransformNormal(const Vector3 & lhs, const Matrix & rhs) -> const 
     return Vector3(num1, num2, num3);
 }
 
+auto Vector3::Lerp(const Vector3 & lhs, const Vector3 & rhs, const float & factor) -> const Vector3
+{
+	float f = Math::Clamp(factor, 0.0f, 1.0f);
+	float num1 = Math::Lerp(lhs.x, rhs.x, f);
+	float num2 = Math::Lerp(lhs.y, rhs.y, f);
+	float num3 = Math::Lerp(lhs.z, rhs.z, f);
+
+	return Vector3(num1, num2, num3);
+}
+
 Vector3::Vector3()
     : x(0.0f)
     , y(0.0f)

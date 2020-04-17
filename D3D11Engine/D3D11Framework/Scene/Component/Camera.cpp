@@ -144,7 +144,7 @@ auto Camera::Pick(const Vector2 & mouse_position, std::shared_ptr<Actor>& actor)
 	return true;
 }
 
-//°úÁ¦
+
 auto Camera::WorldToScreenPoint(const Vector3 & world_position) -> const Vector2
 {
 	return Vector2();

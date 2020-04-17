@@ -58,8 +58,8 @@ public:
 
 private:
 	class Context* context=nullptr;
-	std::string name=NOT_ASSIGNED_STR;
-	bool is_active=true;
+	std::string name = NOT_ASSIGNED_STR;
+	bool is_active = true;
 
 	std::shared_ptr<class Transform> transform;
 	std::shared_ptr<class Renderable> renderable;

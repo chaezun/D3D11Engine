@@ -24,6 +24,8 @@ public:
     static auto TransformCoord(const Vector3& lhs, const class Matrix& rhs) -> const Vector3;
     static auto TransformNormal(const Vector3& lhs, const class Matrix& rhs) -> const Vector3;
 
+	static auto Lerp(const Vector3& lhs, const Vector3& rhs, const float& factor) -> const Vector3;
+
 public:
     Vector3();
     Vector3(const float& x, const float& y, const float& z);

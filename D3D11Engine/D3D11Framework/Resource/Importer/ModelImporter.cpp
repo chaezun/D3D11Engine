@@ -59,6 +59,7 @@ ModelImporter::ModelImporter(Context * context)
    aiProcess_ConvertToLeftHanded : 왼손 좌표계로 변환
 */
 
+//모델 정보를 import
 auto ModelImporter::Load(Model * model, const std::string & path) -> const bool 
 {
 	if (!model || !context)
@@ -103,18 +104,21 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 	//===================================================================================================================
 
 	//Assimp Importer에서 경로상의 파일을 읽어 aiScene을 반환
+	//Assimp가 모델을 import하면 import된 모델 scene을 포함하고 있는 scene 객체를 불러옴
 	if (const auto scene = importer.ReadFile(path, assimp_flags))
 	{
 		parameter.scene = scene;
-		parameter.has_animation = scene->mNumAnimations != 0;
+		parameter.has_animation = scene->mNumAnimations != 0; //모델에 애니메이션 정보가 있는지 체크
 
+		
 		bool is_active = false;
 		std::shared_ptr<Actor> new_actor = scene_manager->GetCurrentScene()->CreateActor(is_active);
 		new_actor->SetName(parameter.name);
 		new_actor->SetActive(true);
-		parameter.model->SetRootActor(new_actor);
-		parameter.model->SetHasAnimation(parameter.has_animation);
+		parameter.model->SetRootActor(new_actor); //Root Actor 설정
+		parameter.model->SetHasAnimation(parameter.has_animation); //Model의 애니메이션 설정
 
+		//모델을 불러올 때 필요한 작업량
 		int job_count = 0;
 		AssimpHelper::ComputeNodeCount(scene->mRootNode, &job_count);
 		ProgressReport::Get().SetJobCount(ProgressType::Model, job_count);
@@ -133,97 +137,139 @@ auto ModelImporter::Load(Model * model, const std::string & path) -> const bool
 	return parameter.scene != nullptr;
 }
 
+//scene에 저장되어있는 Root노드의 계층구조를 assimp_nodes vector에 추가
 void ModelImporter::ParseNodeHierarchy(aiNode * assimp_node)
 {
+     assimp_nodes.emplace_back(assimp_node);
+
+	 //자식 노드의 개수만큼 재귀함수 호출방식으로 vector에 추가
+	 for (uint i = 0; i < assimp_node->mNumChildren; i++)
+		 ParseNodeHierarchy(assimp_node->mChildren[i]);
 }
 
 void ModelImporter::ParseNode(const aiNode * assimp_node, const ModelParameter & parameter, Actor * parent_node, Actor * new_actor)
 {
+	//부모 노드가 있다면 자식 노드를 설정
+	if (parent_node)
+		new_actor->SetName(assimp_node->mName.C_Str());
+
+	ProgressReport::Get().SetStatus(ProgressType::Model, "Creating Actor for " + new_actor->GetName());
+	{
+		const auto parent_transform = parent_node ? parent_node->GetTransform_Raw() : nullptr;
+		new_actor->GetTransform_Raw()->SetParent(parent_transform);
+
+		//각 노드들의 위치와 관련된 매트릭스를 구하고
+		//local pos, rot, scal값을 설정
+		AssimpHelper::ComputeActorTransform(assimp_node, new_actor);
+
+		//노드의 mesh정보를 읽음
+		ParseNodeMeshes(assimp_node, new_actor, parameter);
+
+		//자식 노드의 개수만큼 재귀함수 호출방식으로 노드의 매트릭스를 구하고 local pos, rot, scal값을 설정
+		for (uint i = 0; i < assimp_node->mNumChildren; i++)
+		{
+			auto child = scene_manager->GetCurrentScene()->CreateActor();
+			ParseNode(assimp_node->mChildren[i], parameter, new_actor, child.get());
+		}
+	}
+	ProgressReport::Get().IncrementJobsDone(ProgressType::Model);
+
 }
 
 void ModelImporter::ParseNodeMeshes(const aiNode * assimp_node, Actor * new_actor, const ModelParameter & parameter)
 {
+	//node의 mesh의 개수만큼 수행
+	for (uint i = 0; i < assimp_node->mNumMeshes; i++)
+	{
+		auto actor = new_actor;
+		const auto assimp_mesh = parameter.scene->mMeshes[assimp_node->mMeshes[i]];
+		std::string name = assimp_node->mName.C_Str();
+
+		if (assimp_node->mNumMeshes > 1)
+		{
+			auto is_active = false;
+			actor = scene_manager->GetCurrentScene()->CreateActor(is_active).get();
+			actor->GetTransform_Raw()->SetParent(new_actor->GetTransform_Raw());
+			name += "_" + std::to_string(i + 1);
+		}
+
+		actor->SetName(name);
+		LoadMesh(assimp_mesh, actor, parameter);
+		actor->SetActive(true);
+	}
 }
 
 void ModelImporter::ParseAnimations(const ModelParameter & parameter)
 {
+	//애니메이션 개수만큼 동작
+	for (uint i = 0; i < parameter.scene->mNumAnimations; i++)
+	{
+		const auto assimp_animation = parameter.scene->mAnimations[i];
+		auto animation = std::make_shared<Animation>(context);
+
+		animation->SetName(assimp_animation->mName.C_Str());
+		animation->SetDuration(assimp_animation->mDuration);
+		animation->SetTicksPerSecond(assimp_animation->mTicksPerSecond != 0.0 ? assimp_animation->mTicksPerSecond : 25.0);
+
+		for (uint j = 0; j < assimp_animation->mNumChannels; j++)
+		{
+			const auto assimp_animation_node = assimp_animation->mChannels[j];
+			AnimationNode animation_node;
+
+			animation_node.name = assimp_animation_node->mNodeName.C_Str();
+
+			// Scale keys
+			for (uint k = 0; k < assimp_animation_node->mNumScalingKeys; k++)
+			{
+				const auto time = assimp_animation_node->mScalingKeys[k].mTime;
+				const auto value = AssimpHelper::ToVector3(assimp_animation_node->mScalingKeys[k].mValue);
+
+				animation_node.scale_frames.emplace_back(KeyVector{ time, value }); //Uniform Initialization
+			}
+
+			// Position keys
+			for (uint k = 0; k < assimp_animation_node->mNumPositionKeys; k++)
+			{
+				const auto time = assimp_animation_node->mPositionKeys[k].mTime;
+				const auto value = AssimpHelper::ToVector3(assimp_animation_node->mPositionKeys[k].mValue);
+
+				animation_node.position_frames.emplace_back(KeyVector{ time, value }); //Uniform Initialization
+			}
+
+			// Rotation keys
+			for (uint k = 0; k < assimp_animation_node->mNumRotationKeys; k++)
+			{
+				const auto time = assimp_animation_node->mRotationKeys[k].mTime;
+				const auto value = AssimpHelper::ToQuaternion(assimp_animation_node->mRotationKeys[k].mValue);
+
+				animation_node.rotation_frames.emplace_back(KeyQuaternion{ time, value }); //Uniform Initialization
+			}
+
+			animation->AddAnimationNode(animation_node);
+		}
+		parameter.model->AddAnimation(animation->GetName(), animation);
+	}
 }
 
 void ModelImporter::LoadMesh(aiMesh * assimp_mesh, Actor * parent_actor, const ModelParameter & parameter)
 {
-}
-
-void ModelImporter::LoadBone(const aiMesh * assimp_mesh, const ModelParameter & parameter, std::vector<AnimationVertexWeights>& vertex_weights)
-{
-}
-
-auto ModelImporter::LoadMaterial(aiMaterial * assimp_material, const ModelParameter & parameter) -> std::shared_ptr<class Material>
-{
-	return std::shared_ptr<class Material>();
-}
-
-void ModelImporter::ReadNodeHierarchy(const aiScene * assimp_scene, aiNode * assimp_node, Model * model, Actor * parent_actor, Actor * new_actor)
-{
-	if (!assimp_node->mParent || !new_actor)
-	{
-		new_actor = scene_manager->GetCurrentScene()->CreateActor().get();
-		model->SetRootActor(new_actor->shared_from_this());
-
-		int job_count = 0;
-		AssimpHelper::ComputeNodeCount(assimp_node, &job_count);
-		ProgressReport::Get().SetJobCount(ProgressType::Model, job_count);
-	}
-
-	const auto actor_name = assimp_node->mParent ? assimp_node->mName.C_Str() : FileSystem::GetIntactFileNameFromPath(model_path);
-	new_actor->SetName(actor_name);
-
-	ProgressReport::Get().SetStatus(ProgressType::Model, "Creating model for " + actor_name);
-	{
-		const auto parent_transform = parent_actor ? parent_actor->GetTransform() : nullptr;
-		new_actor->GetTransform()->SetParent(parent_transform.get());
-		//각 노드마다 tranform 데이터를 저장
-		AssimpHelper::ComputeActorTransform(assimp_node, new_actor);
-
-		for (uint i = 0; i < assimp_node->mNumMeshes; i++)
-		{
-			auto actor = new_actor;
-			const auto assimp_mesh = assimp_scene->mMeshes[assimp_node->mMeshes[i]];
-			std::string mesh_name = assimp_node->mName.C_Str();
-
-			if (assimp_node->mNumMeshes > 1)
-			{
-				actor = scene_manager->GetCurrentScene()->CreateActor().get();
-				actor->GetTransform()->SetParent(new_actor->GetTransform().get());
-				mesh_name += "_" + std::to_string(i + 1);
-			}
-
-			actor->SetName(mesh_name);
-
-			LoadMesh(assimp_scene, assimp_mesh, model, actor);
-		}
-
-		for (uint i = 0; i < assimp_node->mNumChildren; i++)
-		{
-			auto child = scene_manager->GetCurrentScene()->CreateActor().get();
-			//재귀로 계속 자식 노드에게 데이터를 설정
-			ReadNodeHierarchy(assimp_scene, assimp_node->mChildren[i], model, new_actor, child);
-		}
-	}
-	ProgressReport::Get().IncrementJobsDone(ProgressType::Model);
-}
-
-void ModelImporter::LoadMesh(const aiScene * assimp_scene, aiMesh * assimp_mesh, Model * model, Actor * actor)
-{
-	if (!model || !assimp_scene || !assimp_mesh || !actor)
+	if (!assimp_mesh || !parent_actor)
 	{
 		LOG_ERROR("Invalid parameter");
 		return;
 	}
 
+	const auto vertex_count = assimp_mesh->mNumVertices;
+
+	std::vector<AnimationVertexWeights> vertex_weights;
+	vertex_weights.reserve(vertex_count);
+	vertex_weights.resize(vertex_count);
+
+	LoadBone(assimp_mesh, parameter, vertex_weights);
+
 	//Vertices
 	std::vector<VertexTextureNormalTangent> vertices;
 	{
-		const auto vertex_count = assimp_mesh->mNumVertices;
 		vertices.reserve(vertex_count);
 		vertices.resize(vertex_count);
 
@@ -243,6 +289,19 @@ void ModelImporter::LoadMesh(const aiScene * assimp_scene, aiMesh * assimp_mesh,
 			const uint uv_channel = 0;
 			if (assimp_mesh->HasTextureCoords(uv_channel))
 				vertex.uv = AssimpHelper::ToVector2(assimp_mesh->mTextureCoords[uv_channel][i]);
+
+			if (!vertex_weights.empty())
+			{
+				vertex.indices.x = static_cast<float>(vertex_weights[i].bone_ids[0]);
+				vertex.indices.y = static_cast<float>(vertex_weights[i].bone_ids[1]);
+				vertex.indices.z = static_cast<float>(vertex_weights[i].bone_ids[2]);
+				vertex.indices.w = static_cast<float>(vertex_weights[i].bone_ids[3]);
+
+				vertex.weights.x = vertex_weights[i].weights[0];
+				vertex.weights.y = vertex_weights[i].weights[1];
+				vertex.weights.z = vertex_weights[i].weights[2];
+				vertex.weights.w = vertex_weights[i].weights[3];
+			}
 		}
 	}
 
@@ -262,21 +321,50 @@ void ModelImporter::LoadMesh(const aiScene * assimp_scene, aiMesh * assimp_mesh,
 		}
 	}
 
-	auto renderable = actor->AddComponent<Renderable>();
-	//TODO : BoundBox
+	auto renderable = parent_actor->AddComponent<Renderable>();
+	renderable->SetHasAnimation(parameter.has_animation);
 
-	model->AddMesh(vertices, indices, renderable);
+	parameter.model->AddMesh(vertices, indices, renderable);
 
-	if (assimp_scene->HasMaterials())
+	if (parameter.scene->HasMaterials())
 	{
-		const auto assimp_material = assimp_scene->mMaterials[assimp_mesh->mMaterialIndex];
-		model->AddMaterial(LoadMaterial(assimp_scene, assimp_material, model), renderable);
+		const auto assimp_material = parameter.scene->mMaterials[assimp_mesh->mMaterialIndex];
+		parameter.model->AddMaterial(LoadMaterial(assimp_material, parameter), renderable);
 	}
 }
 
-auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assimp_material, Model * model) -> std::shared_ptr<Material>
+void ModelImporter::LoadBone(const aiMesh * assimp_mesh, const ModelParameter & parameter, std::vector<AnimationVertexWeights>& vertex_weights)
 {
-	if (!model || !assimp_material)
+	for (int i = static_cast<int>(assimp_mesh->mNumBones - 1); i >= 0; i--)
+	{
+		uint bone_index = 0;
+		std::string name = assimp_mesh->mBones[i]->mName.data;
+
+		if (bone_mapping.find(name) == bone_mapping.end())
+		{
+			bone_index = bone_count;
+			bone_count++;
+
+			auto node = FindAssimpNode(name);
+			auto parent_index = parameter.model->FindBoneIndex(node->mParent->mName.data);
+
+			bone_mapping[name] = bone_index;
+			parameter.model->AddBone(name, parent_index, AssimpHelper::ToMatrix(assimp_mesh->mBones[i]->mOffsetMatrix));
+		}
+		else
+			bone_index = bone_mapping[name];
+
+		for (uint j = 0; j < assimp_mesh->mBones[i]->mNumWeights; j++)
+		{
+			uint vertex_id = assimp_mesh->mBones[i]->mWeights[j].mVertexId;
+			vertex_weights[vertex_id].AddData(bone_index, assimp_mesh->mBones[i]->mWeights[j].mWeight);
+		}
+	}
+}
+
+auto ModelImporter::LoadMaterial(aiMaterial * assimp_material, const ModelParameter & parameter) -> std::shared_ptr<class Material>
+{
+	if (!assimp_material)
 	{
 		LOG_ERROR("Invalid parameter");
 		return nullptr;
@@ -293,7 +381,6 @@ auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assi
 	//양면의 개수가 들어갈 변수
 	int is_two_sided = 0;
 	uint max = 1;
-
 	if (AI_SUCCESS == aiGetMaterialIntegerArray(assimp_material, AI_MATKEY_TWOSIDED, &is_two_sided, &max))
 	{
 		//양면을 사용하는 경우 (양면이 1개 이상인 경우)
@@ -312,58 +399,55 @@ auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assi
 
 	material->SetAlbedoColor(Color4(diffuse_color.r, diffuse_color.g, diffuse_color.b, opacity.r));
 
-	const auto load_texture = [&model, &assimp_scene, &assimp_material, &material, this](const aiTextureType& assimp_type, const TextureType& native_type)
+	const auto load_texture = [&parameter, &assimp_material, &material, this](const aiTextureType& assimp_type, const TextureType& native_type)
 	{
-	    aiString texture_path;
+		aiString texture_path;
 		if (assimp_material->GetTextureCount(assimp_type) > 0)
 		{
 			if (AI_SUCCESS == assimp_material->GetTexture(assimp_type, 0, &texture_path))
 			{
-				const auto deduced_path = AssimpHelper::ValidatePath(texture_path.data, model_path);
-				if(FileSystem::IsSupportedTextureFile(deduced_path))
-				  model->AddTexture(material, native_type, deduced_path);
+				const auto deduced_path = AssimpHelper::ValidatePath(texture_path.data, parameter.path);
+				if (FileSystem::IsSupportedTextureFile(deduced_path))
+					parameter.model->AddTexture(material, native_type, deduced_path);
 
 				//embedded_texture : 모델에 포함된 텍스처(이미지) 파일이 있는지 확인
-				//else if (const auto embedded_texture = assimp_scene->GetEmbeddedTexture(FileSystem::GetFileNameFromPath(texture_path.data).c_str()))
-				//{
-				//    const auto path = Texture2D::SaveEmbeddedTextureToFile
-				//	(
-				//	    model->GetTextureDirectory() + FileSystem::GetFileNameFromPath(embedded_texture->mFilename.data),
-				//	    embedded_texture->achFormatHint,
-				//		embedded_texture->mWidth,
-				//		embedded_texture->mHeight,
-				//		embedded_texture->pcData
-				//	);
-				//
-				//	if(path!=NOT_ASSIGNED_STR)
-				//	  model->AddTexture(material, native_type, path);
-				//}
+				else if (const auto embedded_texture = parameter.scene->GetEmbeddedTexture(FileSystem::GetFileNameFromPath(texture_path.data).c_str()))
+				{
+					const auto path = Texture2D::SaveEmbeddedTextureToFile
+					(
+						parameter.model->GetTextureDirectory() + FileSystem::GetFileNameFromPath(embedded_texture->mFilename.data),
+						embedded_texture->achFormatHint,
+						embedded_texture->mWidth,
+						embedded_texture->mHeight,
+						embedded_texture->pcData
+					);
 
-				if(assimp_type == aiTextureType_DIFFUSE)
-				   material->SetAlbedoColor(Color4::White);
+					//if (path != NOT_ASSIGNED_STR)
+					//    model->AddTexture(material, native_type, path);
+				}
 
-                
+				if (assimp_type == aiTextureType_DIFFUSE)
+					material->SetAlbedoColor(Color4::White);
+
 				if (native_type == TextureType::Normal || native_type == TextureType::Height)
 				{
 					if (const auto texture = material->GetTexture(native_type))
 					{
-					   auto property_type = native_type;
-					   //Height
-					   property_type=(property_type==TextureType::Normal&&texture->IsGrayscale()) ? TextureType::Height : property_type;
-					   //Normal
-					   property_type = (property_type == TextureType::Height&&!texture->IsGrayscale()) ? TextureType::Normal : property_type;
+						auto property_type = native_type;
+						//Height
+						property_type = (property_type == TextureType::Normal && texture->IsGrayscale()) ? TextureType::Height : property_type;
+						//Normal
+						property_type = (property_type == TextureType::Height && !texture->IsGrayscale()) ? TextureType::Normal : property_type;
 
-					   //위에서 걸려서 property_type의 값이 변경되었을때 정상적인 texture로 다시 material에 저장
-					   if (property_type != native_type)
-					   {
-						   material->SetTexture(native_type, std::shared_ptr<ITexture>());
-						   material->SetTexture(property_type, texture);
-					   }
+						//위에서 걸려서 property_type의 값이 변경되었을때 정상적인 texture로 다시 material에 저장
+						if (property_type != native_type)
+						{
+							material->SetTexture(native_type, std::shared_ptr<ITexture>());
+							material->SetTexture(property_type, texture);
+						}
 					}
-
 					else
-					   LOG_ERROR("Failed to get texture");
-					
+						LOG_ERROR("Failed to get texture");
 				}
 			}
 		}
@@ -382,4 +466,15 @@ auto ModelImporter::LoadMaterial(const aiScene * assimp_scene, aiMaterial * assi
 	load_texture(aiTextureType_OPACITY, TextureType::Mask);
 
 	return material;
+}
+
+auto ModelImporter::FindAssimpNode(const std::string & node_name) -> struct aiNode *
+{
+	for (uint i = 0; i < assimp_nodes.size(); i++)
+	{
+		if (assimp_nodes[i]->mName.data == node_name)
+			return assimp_nodes[i];
+	}
+
+	return nullptr;
 }
