@@ -248,23 +248,26 @@ void Transform::UpdateConstantBuffer(const Matrix & view_proj)
 {
 	if (!gpu_buffer)
 	{
-	   gpu_buffer=std::make_shared<ConstantBuffer>(context);
-	   gpu_buffer->Create<TRANSFORM_DATA>();
-    }
+		gpu_buffer = std::make_shared<ConstantBuffer>(context);
+		gpu_buffer->Create<TRANSFORM_DATA>();
+	}
 
-	if(cpu_buffer.world==world)
-	   return;
+	const auto wvp_current = world * view_proj;
 
-	auto gpu_data= gpu_buffer->Map<TRANSFORM_DATA>();
+	auto gpu_data = gpu_buffer->Map<TRANSFORM_DATA>();
 	if (!gpu_data)
 	{
 		LOG_ERROR("Failed to map buffer");
 		return;
 	}
 
-	gpu_data->world=cpu_buffer.world=world;
+	gpu_data->world = cpu_buffer.world = world;
+	gpu_data->wvp_current = cpu_buffer.wvp_current = wvp_current;
+	gpu_data->wvp_previous = cpu_buffer.wvp_previous = wvp_previous;
 
 	gpu_buffer->Unmap();
+
+	wvp_previous = wvp_current;
 }
 
 void Transform::Translate(const Vector3 & delta)
@@ -285,7 +288,7 @@ void Transform::UpdateTransform()
 	local = S * R*T;
 
 	if (HasParent())
-		world = local * parent->GetWorldMatrix();
+		world = local * parent->GetWorldMatrix(); 
 	else
 		world = local;
 

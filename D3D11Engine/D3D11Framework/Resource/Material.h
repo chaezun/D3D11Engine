@@ -6,16 +6,8 @@ enum class TextureType : uint
 	Unknown,
 	//입체감이 없이 색만 가지고 있는 것
 	Albedo,
-	Roughness,
-	Metallic,
 	Normal,
 	Height,
-	//그림자
-	Occlusion,
-	//방출(네온사인 같은 것)
-	Emissive,
-	//표면을 바꾸는 것
-	Mask,
 };
 
 class Material final : public IResource

@@ -30,6 +30,7 @@ struct GLOBAL_DATA final
 	Matrix view_proj_inverse;
 	Matrix post_process_proj;
 	Matrix post_process_view_proj;
+
 	float camera_near;
 	float camera_far;
 	Vector2 resolution;
@@ -41,6 +42,8 @@ struct GLOBAL_DATA final
 struct TRANSFORM_DATA final
 {
     Matrix world;
+	Matrix wvp_current;
+	Matrix wvp_previous;
 };
 
 //Material
@@ -52,9 +55,7 @@ struct MATERIAL_DATA final
 	float roughness_coef;
 	float metallic_coef;
 	float normal_coef;
-	float height_coef;
 	float shading_mode;
-	float padding[3];
 };
 
 //Ligth

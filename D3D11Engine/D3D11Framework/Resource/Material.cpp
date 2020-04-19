@@ -30,13 +30,7 @@ void Material::SetStandardShader()
 	uint shader_flags = 0U;
 
 	if (HasTexture(TextureType::Albedo))    shader_flags |= Shader_Flags_Albedo;
-	if (HasTexture(TextureType::Roughness)) shader_flags |= Shader_Flags_Roughness;
-	if (HasTexture(TextureType::Metallic))  shader_flags |= Shader_Flags_Metallic;
 	if (HasTexture(TextureType::Normal))    shader_flags |= Shader_Flags_Normal;
-	if (HasTexture(TextureType::Height))    shader_flags |= Shader_Flags_Height;
-	if (HasTexture(TextureType::Occlusion)) shader_flags |= Shader_Flags_Occlusion;
-	if (HasTexture(TextureType::Emissive))  shader_flags |= Shader_Flags_Emissive;
-	if (HasTexture(TextureType::Mask))      shader_flags |= Shader_Flags_Mask;
 
 	shader = Standard_Shader::GetMatching_StandardShader(context, shader_flags);
 }
@@ -58,13 +52,7 @@ auto Material::GetTextureShaderResources() -> std::vector<ID3D11ShaderResourceVi
 	std::vector<ID3D11ShaderResourceView*> shader_resources
 	{
 		GetTextureShaderResource(TextureType::Albedo),
-		GetTextureShaderResource(TextureType::Roughness),
-		GetTextureShaderResource(TextureType::Metallic),
 		GetTextureShaderResource(TextureType::Normal),
-		GetTextureShaderResource(TextureType::Height),
-		GetTextureShaderResource(TextureType::Occlusion),
-		GetTextureShaderResource(TextureType::Emissive),
-		GetTextureShaderResource(TextureType::Mask),
 	};
 
 	return shader_resources;
@@ -117,7 +105,6 @@ void Material::UpdateConstantBuffer()
 	is_update |= cpu_buffer.roughness_coef != roughness_coef ? true : false;
 	is_update |= cpu_buffer.metallic_coef != metallic_coef ? true : false;
 	is_update |= cpu_buffer.normal_coef != normal_coef ? true : false;
-	is_update |= cpu_buffer.height_coef != height_coef ? true : false;
 
 	if (!is_update)
 		return;
@@ -135,7 +122,6 @@ void Material::UpdateConstantBuffer()
 	gpu_data->roughness_coef = cpu_buffer.roughness_coef = roughness_coef;
 	gpu_data->metallic_coef = cpu_buffer.metallic_coef = metallic_coef;
 	gpu_data->normal_coef = cpu_buffer.normal_coef = normal_coef;
-	gpu_data->height_coef = cpu_buffer.height_coef = height_coef;
 
 	gpu_buffer->Unmap();
 }

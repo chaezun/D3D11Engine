@@ -44,7 +44,7 @@ public:
 	void SetResourcePath(const std::string& path) { this->resource_path = path; }
 
 protected:
-    class Context* context;
+    class Context* context = nullptr;
 	ResourceType resource_type;
 	std::string resource_name;
 	std::string resource_path;

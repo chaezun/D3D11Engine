@@ -34,7 +34,7 @@ void SceneManager::SetCurrentScene(const std::string & scene_name)
 
 auto SceneManager::RegisterScene(const std::string & scene_name) -> class Scene*
 {
-    auto pair_ib=scenes.insert(std::make_pair(scene_name, std::make_shared<Scene>(context)));
+    auto pair_ib = scenes.insert(std::make_pair(scene_name, std::make_shared<Scene>(context)));
 	//삽입이 성공하면 true, 실패하면 false
 	//실패했다는건 이미 자료가 들어있기 때문
 	if (!pair_ib.second)

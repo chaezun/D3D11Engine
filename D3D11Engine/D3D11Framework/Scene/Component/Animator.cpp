@@ -8,6 +8,7 @@ Animator::Animator(Context * context, Actor * actor, Transform * transform)
 
 	skinned_transforms.reserve(MAX_BONE_COUNT);
 	skinned_transforms.resize(MAX_BONE_COUNT);
+
 }
 
 Animator::~Animator()
@@ -22,15 +23,17 @@ void Animator::OnUpdate()
 {
 	if (current_animation.expired() || animation_mode != AnimationMode::Play)
 		return;
+     
+	auto timer = context->GetSubsystem<Timer>();
 
 	float ticks_per_second = current_animation.lock()->GetTicksPerSecond();
-	float time_in_ticks = delta_time * ticks_per_second;
+	float time_in_ticks = timer->GetDeltaTimeSec() * ticks_per_second;
 	float duration = current_animation.lock()->GetDuration();
 	float animation_time = fmod(time_in_ticks, duration);
 
 	static float t = 0.0f;
-	t += delta_time;
-
+	t += timer->GetDeltaTimeSec();
+	
 	std::vector<Matrix> animation_transforms(skeleton->GetBoneCount());
 	current_animation.lock()->CalcAnimationTransforms(animation_transforms, t);
 

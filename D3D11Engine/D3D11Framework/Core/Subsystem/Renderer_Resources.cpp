@@ -12,7 +12,9 @@ void Renderer::CreateRenderTextures()
 		return;
 	}
 
-	//Final
+	//GBuffer
+	render_textures[RenderTextureType::GBuffer_Albedo] = std::make_shared<Texture2D>(context, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 1, TEXTURE_BIND_RTV | TEXTURE_BIND_SRV);
+	render_textures[RenderTextureType::GBuffer_Normal] = std::make_shared<Texture2D>(context, width, height, DXGI_FORMAT_R16G16B16A16_FLOAT, 1, TEXTURE_BIND_RTV | TEXTURE_BIND_SRV);
 	render_textures[RenderTextureType::Final] = std::make_shared<Texture2D>(context, width, height, DXGI_FORMAT_R16G16B16A16_FLOAT, 1, TEXTURE_BIND_RTV | TEXTURE_BIND_SRV);
 
 	//Test
@@ -24,26 +26,32 @@ void Renderer::CreateShaders()
 	const auto shader_directory = context->GetSubsystem<ResourceManager>()->GetAssetDirectory(AssetType::Shader);
 
 	//Vertex Shader
-	auto vs_standard = std::make_shared<Shader>(context);
-	vs_standard->AddShader<VertexShader>(shader_directory + "Prev/" + "PixelShader.hlsl");
-	shaders[ShaderType::VS_STANDARD] = vs_standard;
+	auto vs_gbuffer = std::make_shared<Shader>(context);
+	vs_gbuffer->AddShader<VertexShader>(shader_directory + "GBuffer.hlsl");
+	shaders[ShaderType::VS_GBUFFER] = vs_gbuffer;
+
+	//Animation Shader
+	auto vs_skinned_animation = std::make_shared<Shader>(context);
+	vs_skinned_animation->AddDefine("SKINNED_ANIMATION");
+	vs_skinned_animation->AddShader<VertexShader>(shader_directory + "GBuffer.hlsl");
+	shaders[ShaderType::VS_SKINNED_ANIMATION] = vs_skinned_animation;
 
 	//Pixel Shader
-	auto ps_standard = std::make_shared<Shader>(context);
-	ps_standard->AddShader<PixelShader>(shader_directory + "Prev/"+ "PixelShader.hlsl");
-	shaders[ShaderType::PS_STANDARD] = ps_standard;
+	auto ps_gbuffer = std::make_shared<Shader>(context);
+	ps_gbuffer->AddShader<PixelShader>(shader_directory + "GBuffer.hlsl");
+	shaders[ShaderType::PS_GBUFFER] = ps_gbuffer;
 
-	//Vertex Pixel Shader
+	//Vertex Pixel Shader(Line Draw¿¡ »ç¿ë)
 	auto vps_color = std::make_shared<Shader>(context);
-	vps_color->AddShader<VertexShader>(shader_directory + "Prev/" + "Color.hlsl");
-	vps_color->AddShader<PixelShader>(shader_directory + "Prev/" + "Color.hlsl");
-	shaders[ShaderType::VPS_COLOR] = vps_color;
+	vps_color->AddShader<VertexShader>(shader_directory + "LineDraw.hlsl");
+	vps_color->AddShader<PixelShader>(shader_directory + "LineDraw.hlsl");
+	shaders[ShaderType::VPS_LINEDRAW] = vps_color;
 
-	//
-	auto vps_skybox = std::make_shared<Shader>(context);
-	vps_skybox->AddShader<VertexShader>(shader_directory + "Prev/" + "SkyBox.hlsl");
-	vps_skybox->AddShader<PixelShader>(shader_directory + "Prev/" + "SkyBox.hlsl");
-	shaders[ShaderType::VPS_SKYBOX] = vps_skybox;
+	////
+	//auto vps_skybox = std::make_shared<Shader>(context);
+	//vps_skybox->AddShader<VertexShader>(shader_directory + "Prev/" + "SkyBox.hlsl");
+	//vps_skybox->AddShader<PixelShader>(shader_directory + "Prev/" + "SkyBox.hlsl");
+	//shaders[ShaderType::VPS_SKYBOX] = vps_skybox;
 }
 
 void Renderer::CreateConstantBuffers()

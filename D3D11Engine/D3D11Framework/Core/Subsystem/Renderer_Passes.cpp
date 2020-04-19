@@ -12,26 +12,15 @@
 
 void Renderer::PassMain()
 {
-	PassStandard();
+	PassGBuffer();
 	PassLine(render_textures[RenderTextureType::Final]);
 }
 
-void Renderer::PassStandard()
+void Renderer::PassGBuffer()
 {
 	command_list->Begin("PassMain");
 	{
-		auto& final_texture = render_textures[RenderTextureType::Final];
-
-		if (renderables[RenderableType::Opaque].empty())
-		{
-			command_list->ClearRenderTarget(final_texture);
-			command_list->ClearDepthStencilTarget(depth_texture, D3D11_CLEAR_DEPTH);
-			command_list->End();
-			command_list->Submit();
-			return;
-		}
-
-		const auto& vertex_shader = shaders[ShaderType::VS_STANDARD];
+		const auto& vertex_shader = shaders[ShaderType::VS_GBUFFER];
 		if (!vertex_shader)
 		{
 			command_list->End();
@@ -39,11 +28,32 @@ void Renderer::PassStandard()
 			return;
 		}
 
+		auto& albedo_texture = render_textures[RenderTextureType::GBuffer_Albedo];
+		auto& normal_texture = render_textures[RenderTextureType::GBuffer_Normal];
+		auto& final_texture = render_textures[RenderTextureType::Final];
+
+		if (renderables[RenderableType::Opaque].empty())
+		{
+			command_list->ClearRenderTarget(albedo_texture);
+			command_list->ClearRenderTarget(normal_texture);
+			command_list->ClearRenderTarget(final_texture);
+			command_list->ClearDepthStencilTarget(depth_texture, D3D11_CLEAR_DEPTH);
+			command_list->End();
+			command_list->Submit();
+			return;
+		}
+
+		const std::vector<ID3D11RenderTargetView*> render_targets
+		{
+			albedo_texture->GetRenderTargetView(),
+			normal_texture->GetRenderTargetView(),
+		};
+
 		UpdateGlobalBuffer(final_texture->GetWidth(), final_texture->GetHeight());
 
-		uint current_material_id = 0;
-		uint current_mesh_id = 0;
-		uint current_shader_id = 0;
+		uint current_mesh_id = 0;     //현재 적용된 매쉬의 ID
+		uint current_material_id = 0; //현재 적용된 재질(표면 텍스처)의 ID
+		uint current_shader_id = 0;   //현재 적용된 쉐이더의 ID
 
 		const auto draw_actor = [this, &current_material_id, &current_mesh_id, &current_shader_id](Actor* actor)
 		{
@@ -51,14 +61,7 @@ void Renderer::PassStandard()
 			if (!renderable)
 				return;
 
-			const auto& material = renderable->GetMaterial();
-			if (!material)
-				return;
-
-			const auto& pixel_shader = material->GetShader();
-			if (!pixel_shader)
-				return;
-
+			//Mesh
 			const auto& mesh = renderable->GetMesh();
 			if (!mesh || !mesh->GetVertexBuffer() || !mesh->GetIndexBuffer())
 				return;
@@ -70,11 +73,10 @@ void Renderer::PassStandard()
 				current_mesh_id = mesh->GetID();
 			}
 
-			if (current_shader_id != pixel_shader->GetID())
-			{
-				command_list->SetPixelShader(pixel_shader);
-				current_shader_id = pixel_shader->GetID();
-			}
+			//Material
+			const auto& material = renderable->GetMaterial();
+			if (!material)
+				return;
 
 			if (current_material_id != material->GetID())
 			{
@@ -82,8 +84,39 @@ void Renderer::PassStandard()
 				command_list->SetShaderResources(0, ShaderScope::PS, material->GetTextureShaderResources());
 
 				material->UpdateConstantBuffer();
-				command_list->SetConstantBuffer(1, ShaderScope::PS, material->GetConstantBuffer());
+				command_list->SetConstantBuffer(2, ShaderScope::PS, material->GetConstantBuffer());
 				current_material_id = material->GetID();
+			}
+
+			//Shader
+			const auto& pixel_shader = material->GetShader();
+			if (!pixel_shader)
+				return;
+
+			if (current_shader_id != pixel_shader->GetID())
+			{
+				command_list->SetPixelShader(pixel_shader);
+				current_shader_id = pixel_shader->GetID();
+			}
+
+			const auto& transform = actor->GetTransform();
+			transform->UpdateConstantBuffer(camera_view_proj);
+			command_list->SetConstantBuffer(1, ShaderScope::VS, transform->GetConstantBuffer());
+
+			if (renderable->GetHasAnimation())
+			{
+				auto root_transform = transform->GetRoot();
+				auto root_actor = root_transform->GetActor();
+
+				if (auto animator = root_actor->GetComponent<Animator>())
+				{
+					animator->UpdateConstantBuffer();
+					command_list->SetConstantBuffer(4, ShaderScope::VS, animator->GetConstantBuffer());
+
+					auto& vertex_shader = shaders[ShaderType::VS_SKINNED_ANIMATION];
+					command_list->SetVertexShader(vertex_shader);
+					command_list->SetInputLayout(vertex_shader->GetInputLayout());
+				}
 			}
 
 			/*if (skybox)
@@ -92,9 +125,6 @@ void Renderer::PassStandard()
 				command_list->SetPixelShader(shaders[ShaderType::VPS_SKYBOX]);
 			}*/
 
-			const auto& transform = actor->GetTransform();
-			transform->UpdateConstantBuffer(camera_view_proj);
-			command_list->SetConstantBuffer(2, ShaderScope::VS, transform->GetConstantBuffer());
 
 			command_list->DrawIndexed(mesh->GetIndexBuffer()->GetCount(), mesh->GetIndexBuffer()->GetOffset(), mesh->GetVertexBuffer()->GetOffset());
 		};
@@ -130,7 +160,7 @@ void Renderer::PassLine(const std::shared_ptr<ITexture>& out)
 {
 	const bool is_draw_aabb = renderer_options & RendererOption_AABB;
 	const bool is_draw_grid = renderer_options & RendererOption_Grid;
-	const auto& shader = shaders[ShaderType::VPS_COLOR];
+	const auto& shader = shaders[ShaderType::VPS_LINEDRAW];
 	if (!shader)
 		return;
 

@@ -1,0 +1,3 @@
+﻿IrrXML_debug.lib(test.obj) : warning LNK4006: main이(가) FreeImageLib_debug.lib(b44ExpLogTable.obj)에 이미 정의되어 있습니다. 초 정의가 무시됩니다.
+  D3D11Framework.vcxproj -> C:\Users\User\Desktop\GradPortfolio\D3D11GradPortfol\D3D11Engine\x64\Debug\D3D11Framework.lib
+          1개 파일을 이동했습니다.

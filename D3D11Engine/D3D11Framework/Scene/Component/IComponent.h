@@ -48,8 +48,6 @@ public:
 	auto IsEnabled() const -> const bool& {return is_enabled;}
 	void SetEnabled(const bool& is_enabled) {this->is_enabled=is_enabled;}
 
-
-
 protected:
    class Context* context=nullptr;
    class Actor* actor=nullptr;

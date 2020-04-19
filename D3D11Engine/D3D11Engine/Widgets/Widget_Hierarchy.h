@@ -21,9 +21,7 @@ private:
 
 private:
     auto CreateEmptyActor() -> std::shared_ptr<class Actor>;
-    void Create
-	Mesh(const MeshType& mesh_type);
-	void CreateTerrain();
+    void CreateStandardMesh(const MeshType& mesh_type);
 
 private: 
     bool is_expand_to_show_actor = false;

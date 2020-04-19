@@ -9,12 +9,10 @@ enum RendererOption : uint
 
 enum class ShaderType : uint
 {
-	VS_STANDARD,
-	PS_STANDARD,
-	VPS_COLOR,
-
-	//
-	VPS_SKYBOX,
+	VS_GBUFFER,
+	VS_SKINNED_ANIMATION,
+	PS_GBUFFER,
+	VPS_LINEDRAW, //Line Draw를 위한 쉐이더
 };
 
 enum class RenderableType : uint
@@ -30,6 +28,8 @@ enum class RenderableType : uint
 
 enum class RenderTextureType : uint
 {
+	GBuffer_Albedo,
+	GBuffer_Normal,
 	Final,
 };
 
@@ -86,9 +86,10 @@ private:
 	void UpdateGlobalBuffer(const uint& width, const uint& height, const Matrix& transform = Matrix::Identity);
 	
 	auto GetRasterizerState(const D3D11_CULL_MODE& cull_mode, const D3D11_FILL_MODE& fill_mode = D3D11_FILL_SOLID) -> const std::shared_ptr<class RasterizerState>&;
+
 private:
 	void PassMain();
-	void PassStandard();
+    void PassGBuffer();
 	void PassLine(const std::shared_ptr<class ITexture>& out);
 
 private:

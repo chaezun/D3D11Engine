@@ -199,13 +199,7 @@ void Widget_Inspector::ShowMaterial(std::shared_ptr<class Material>& material) c
 		material_color_picker->SetColor(material->GetAlbedoColor());
 
 		const auto albedo_texture = material->GetTexture(TextureType::Albedo);
-		const auto roughness_texture = material->GetTexture(TextureType::Roughness);
-		const auto metallic_texture = material->GetTexture(TextureType::Metallic);
 		const auto normal_texture = material->GetTexture(TextureType::Normal);
-		const auto height_texture = material->GetTexture(TextureType::Height);
-		const auto occlusion_texture = material->GetTexture(TextureType::Occlusion);
-		const auto emissive_texture = material->GetTexture(TextureType::Emissive);
-		const auto mask_texture = material->GetTexture(TextureType::Mask);
 
 		const auto show_texture_slot = [&material](const char* name, const std::shared_ptr<ITexture>& texture, const TextureType& type)
 		{
@@ -250,26 +244,8 @@ void Widget_Inspector::ShowMaterial(std::shared_ptr<class Material>& material) c
 		ImGui::SameLine();
 		material_color_picker->Update();
 
-		//Roughness
-		show_texture_slot("Roughness", roughness_texture, TextureType::Roughness);
-
-		//Metallic
-		show_texture_slot("Metallic", metallic_texture, TextureType::Metallic);
-
 		//Normal
 		show_texture_slot("Normal", normal_texture, TextureType::Normal);
-
-		//Heigth
-		show_texture_slot("Heigth", height_texture, TextureType::Height);
-
-		//Occlusion
-		show_texture_slot("Occlusion", occlusion_texture, TextureType::Occlusion);
-
-		//Emissive
-		show_texture_slot("Emissive", emissive_texture, TextureType::Emissive);
-
-		//Mask
-		show_texture_slot("Mask", mask_texture, TextureType::Mask);
 
 		//Offset
 		ImGui::TextUnformatted("Offset");
