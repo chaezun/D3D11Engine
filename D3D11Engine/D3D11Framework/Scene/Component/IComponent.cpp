@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "SkyBox.h"
 #include "Script.h"
+#include "Terrain.h"
 #include "AudioSource.h"
 #include "AudioListener.h"
 #include "Animator.h"
@@ -39,6 +40,7 @@ REGISTER_COMPONENT_TYPE(Transform, ComponentType::Transform);
 REGISTER_COMPONENT_TYPE(Renderable, ComponentType::Renderable);
 REGISTER_COMPONENT_TYPE(Camera, ComponentType::Camera);
 REGISTER_COMPONENT_TYPE(Light, ComponentType::Light);
+REGISTER_COMPONENT_TYPE(Terrain, ComponentType::Terrain);
 REGISTER_COMPONENT_TYPE(SkyBox, ComponentType::SkyBox);
 REGISTER_COMPONENT_TYPE(Script, ComponentType::Script);
 REGISTER_COMPONENT_TYPE(AudioSource, ComponentType::AudioSource)

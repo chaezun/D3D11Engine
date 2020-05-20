@@ -81,6 +81,7 @@
     <ClInclude Include="Resource\Animation.h" />
     <ClInclude Include="Resource\Skeleton.h" />
     <ClInclude Include="Scene\Component\Animator.h" />
+    <ClInclude Include="Scene\Component\Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D11Framework.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="Resource\Animation.cpp" />
     <ClCompile Include="Resource\Skeleton.cpp" />
     <ClCompile Include="Scene\Component\Animator.cpp" />
+    <ClCompile Include="Scene\Component\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="NatvisFile.natvis" />

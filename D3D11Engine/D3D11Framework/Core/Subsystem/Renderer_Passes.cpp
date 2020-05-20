@@ -8,6 +8,7 @@
 #include "Scene/Component/Renderable.h"
 #include "Scene/Component/Camera.h"
 #include "Scene/Component/Light.h"
+#include "Scene/Component/Terrain.h"
 #include "Scene/Component/Animator.h"
 
 void Renderer::PassMain()
@@ -125,6 +126,11 @@ void Renderer::PassGBuffer()
 				command_list->SetPixelShader(shaders[ShaderType::VPS_SKYBOX]);
 			}*/
 
+		   if (auto terrain = actor->GetComponent<Terrain>())
+		   {
+		       command_list->SetShaderResources(1, ShaderScope::PS, terrain->GetTextureShaderResources());
+		   }
+
 
 			command_list->DrawIndexed(mesh->GetIndexBuffer()->GetCount(), mesh->GetIndexBuffer()->GetOffset(), mesh->GetVertexBuffer()->GetOffset());
 		};
@@ -132,7 +138,7 @@ void Renderer::PassGBuffer()
 		command_list->SetRasterizerState(cull_back_solid_state);
 		command_list->SetDepthStencilState(depth_stencil_enabled_state);
 		command_list->SetRenderTarget(final_texture, depth_texture);
-		command_list->SetViewport(final_texture->GetViewport());
+		command_list->SetViewport(albedo_texture->GetViewport());
 		command_list->ClearRenderTarget(final_texture);
 		command_list->ClearDepthStencilTarget(depth_texture, D3D11_CLEAR_DEPTH, 1.0f);
 		command_list->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -4,6 +4,7 @@
 #include "Scene/Actor.h"
 #include "Scene/Component/Transform.h"
 #include "Scene/Component/Renderable.h"
+#include "Scene/Component/Terrain.h"
 
 namespace Hierarchy_Data
 {
@@ -67,11 +68,13 @@ void Widget_Hierarchy::ShowMenuPopup()
 		ImGui::EndMenu();
 	}
 
-	//if (ImGui::BeginMenu("Environment"))
-	//{
-	//    
-	//	ImGui::EndMenu();
-	//}
+	if (ImGui::BeginMenu("Environment"))
+	{
+		if (ImGui::MenuItem("Terrain"))
+			CreateTerrain();
+
+		ImGui::EndMenu();
+	}
 
 	ImGui::EndPopup();
 }
@@ -180,6 +183,15 @@ void Widget_Hierarchy::CreateStandardMesh(const MeshType & mesh_type)
 		Editor_Helper::Get().LoadModel(directory + "Capsule.fbx");
 		break;
 	}
+	}
+}
+
+void Widget_Hierarchy::CreateTerrain()
+{
+	if (auto actor = CreateEmptyActor())
+	{
+		actor->AddComponent<Terrain>();
+		actor->SetName("Terrain");
 	}
 }
 

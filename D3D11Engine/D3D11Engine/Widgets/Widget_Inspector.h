@@ -12,6 +12,7 @@ public:
 private:
     void ShowTransform(std::shared_ptr<class Transform>& transform) const;
 	void ShowRenderable(std::shared_ptr<class Renderable>& renderable) const;
+	void ShowTerrain(std::shared_ptr<class Terrain>& terrain) const;
 	void ShowMaterial(std::shared_ptr<class Material>& material) const;
 	void ShowScript(std::shared_ptr<class Script>& script) const;
 	void ShowAudioSource(std::shared_ptr<class AudioSource>& audio_source);

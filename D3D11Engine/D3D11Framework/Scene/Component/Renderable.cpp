@@ -33,10 +33,8 @@ void Renderable::SetStandardMaterial()
 	}
 
 	auto resource_manager = context->GetSubsystem<ResourceManager>();
-	auto default_texture = resource_manager->Load<Texture2D>(resource_manager->GetAssetDirectory(AssetType::Texture) + "Default.png");
 
 	material = std::make_shared<Material>(context);
-	material->SetTexture(TextureType::Albedo, default_texture);
 	material->SetAlbedoColor(Color4(0.6f, 0.6f, 0.6f, 1.0f));
 	material->SetStandardShader();
 	material->SetResourceName("Standard");

@@ -37,30 +37,6 @@ private:
 private:
 	auto FindAssimpNode(const std::string& node_name) -> struct aiNode*;
 
-    void ReadNodeHierarchy
-	(
-	   const struct aiScene* assimp_scene,
-	   struct aiNode* assimp_node,
-	   class Model* model,
-	   class Actor* parent_actor=nullptr,
-	   class Actor* new_actor=nullptr
-	);
-
-	void LoadMesh
-	(
-	   const struct aiScene* assimp_scene,
-	   struct aiMesh* assimp_mesh,
-	   class Model* model,
-	   class Actor* actor
-	);
-
-	auto LoadMaterial
-	(
-	  const struct aiScene* assimp_scene,
-	  struct aiMaterial* assimp_material,
-	  class Model* model
-	) -> std::shared_ptr<Material>;
-
 private:
    class Context* context            = nullptr;
    class SceneManager* scene_manager = nullptr;

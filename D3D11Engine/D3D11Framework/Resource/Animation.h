@@ -90,4 +90,6 @@ private:
 
 	std::shared_ptr<Skeleton> skeleton;
 	std::vector<AnimationNode> animation_nodes;
+
+    uint animation_node_index = 0;
 };

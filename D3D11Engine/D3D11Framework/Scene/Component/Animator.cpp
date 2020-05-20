@@ -21,26 +21,30 @@ void Animator::OnStart()
 
 void Animator::OnUpdate()
 {
-	if (current_animation.expired() || animation_mode != AnimationMode::Play)
-		return;
-     
-	auto timer = context->GetSubsystem<Timer>();
-
-	float ticks_per_second = current_animation.lock()->GetTicksPerSecond();
-	float time_in_ticks = timer->GetDeltaTimeSec() * ticks_per_second;
-	float duration = current_animation.lock()->GetDuration();
-	float animation_time = fmod(time_in_ticks, duration);
-
-	static float t = 0.0f;
-	t += timer->GetDeltaTimeSec();
-	
-	std::vector<Matrix> animation_transforms(skeleton->GetBoneCount());
-	current_animation.lock()->CalcAnimationTransforms(animation_transforms, t);
-
-	for (uint i = 0; i < animation_transforms.size(); i++)
+	if (Engine::IsFlagEnabled(EngineFlags_Game))
 	{
-		auto bone_offset = skeleton->GetBoneOffset(i);
-		skinned_transforms[i] = bone_offset * animation_transforms[i];
+
+		if (current_animation.expired() || animation_mode != AnimationMode::Play)
+			return;
+
+		auto timer = context->GetSubsystem<Timer>();
+
+		float ticks_per_second = current_animation.lock()->GetTicksPerSecond();
+		float time_in_ticks = timer->GetDeltaTimeSec() * ticks_per_second;
+		float duration = current_animation.lock()->GetDuration();
+		float animation_time = fmod(time_in_ticks, duration);
+
+		static float t = 0.0f;
+		t += animation_time;
+
+		std::vector<Matrix> animation_transforms(skeleton->GetBoneCount());
+		current_animation.lock()->CalcAnimationTransforms(animation_transforms, t);
+
+		for (uint i = 0; i < animation_transforms.size(); i++)
+		{
+			auto bone_offset = skeleton->GetBoneOffset(i);
+			skinned_transforms[i] = bone_offset * animation_transforms[i];
+		}
 	}
 }
 

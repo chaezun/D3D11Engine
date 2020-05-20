@@ -3,6 +3,7 @@
 #include "Scene/Actor.h"
 #include "Scene/Component/Transform.h"
 #include "Scene/Component/Renderable.h"
+#include "Scene/Component/Terrain.h"
 #include "Scene/Component/Script.h"
 #include "Scene/Component/AudioSource.h"
 #include "Scene/Component/AudioListener.h"
@@ -95,6 +96,9 @@ void Widget_Inspector::Render()
 		auto renderable = actor->GetComponent<Renderable>();
 		ShowRenderable(renderable);
 
+		auto terrain = actor->GetComponent<Terrain>();
+		ShowTerrain(terrain);
+
 		auto script = actor->GetComponent<Script>();
 		ShowScript(script);
 
@@ -185,6 +189,87 @@ void Widget_Inspector::ShowRenderable(std::shared_ptr<class Renderable>& rendera
 	Inspector_Data::ComponentEnd();
 
 	ShowMaterial(material);
+}
+
+void Widget_Inspector::ShowTerrain(std::shared_ptr<class Terrain>& terrain) const
+{
+	if (!terrain)
+		return;
+
+	if (Inspector_Data::ComponentBegin("Terrain", IconType::Component_Terrain, terrain))
+	{
+		auto texture = terrain->GetHeightMap();
+		auto min_y = terrain->GetMinY();
+		auto max_y = terrain->GetMaxY();
+		auto progress = terrain->GetProgress();
+
+		ImGui::BeginGroup();
+		{
+			ImGui::TextUnformatted("Height map");
+			ImGui::SameLine(90.0f);
+			ImGui::Image
+			(
+				texture ? texture->GetShaderResourceView() : nullptr,
+				ImVec2(80.0f, 80.0f),
+				ImVec2(0.0f, 0.0f),
+				ImVec2(1.0f, 1.0f),
+				ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+				ImVec4(1.0f, 1.0f, 1.0f, 0.5f)
+			);
+
+			//Drag Drop Event
+			if (auto payload = DragDropEvent::ReceiveDragDropPayload(PayloadType::Texture))
+			{
+				try
+				{
+					if (const auto resource = Editor_Helper::Get().resource_manager->Load<Texture2D>(std::get<const char*>(payload->data)))
+						terrain->SetHeightMap(resource);
+
+				}
+				catch (const std::bad_variant_access& error)
+				{
+					LOG_ERROR_F("%s", error.what());
+				}
+			}
+
+			//Remove button
+			if (terrain->HasHeightMap())
+			{
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 30.0f);
+				if (Icon_Provider::Get().ImageButton("Terrain HeightMap", IconType::Button_Remove, 15.0f))
+					terrain->SetHeightMap(std::shared_ptr<Texture2D>());
+			}
+
+			if (ImGui::Button("Generate", ImVec2(83.0f, 0.0f)))
+				terrain->Generate();
+		}
+		ImGui::EndGroup();
+
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+		{
+			ImGui::InputFloat("Min Y", &min_y);
+			ImGui::InputFloat("Max Y", &max_y);
+
+			if (progress > 0.0f && progress < 1.0f)
+			{
+				ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
+				ImGui::TextUnformatted(terrain->GetProgressState().c_str());
+			}
+		}
+		ImGui::EndGroup();
+
+		if (!Engine::IsFlagEnabled(EngineFlags_Game))
+		{
+			if (min_y != terrain->GetMinY())
+				terrain->SetMinY(min_y);
+			if (max_y != terrain->GetMaxY())
+				terrain->SetMaxY(max_y);
+		}
+	}
+	Inspector_Data::ComponentEnd();
 }
 
 void Widget_Inspector::ShowMaterial(std::shared_ptr<class Material>& material) const

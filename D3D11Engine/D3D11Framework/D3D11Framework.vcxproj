@@ -200,6 +200,7 @@
     <ClInclude Include="Scene\Component\Animator.h" />
     <ClInclude Include="Scene\Component\AudioListener.h" />
     <ClInclude Include="Scene\Component\AudioSource.h" />
+    <ClInclude Include="Scene\Component\Terrain.h" />
     <ClInclude Include="Utility\Log\Engine_Logger.h" />
     <ClInclude Include="Utility\Log\ILogger.h" />
     <ClInclude Include="Utility\Log\Log.h" />
@@ -276,6 +277,7 @@
     <ClCompile Include="Scene\Component\Animator.cpp" />
     <ClCompile Include="Scene\Component\AudioListener.cpp" />
     <ClCompile Include="Scene\Component\AudioSource.cpp" />
+    <ClCompile Include="Scene\Component\Terrain.cpp" />
     <ClCompile Include="Utility\Log\Log.cpp" />
     <ClCompile Include="Math\BoundBox.cpp" />
     <ClCompile Include="Math\Color4.cpp" />

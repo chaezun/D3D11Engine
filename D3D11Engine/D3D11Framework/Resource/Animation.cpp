@@ -36,7 +36,7 @@ void Animation::CalcAnimationTransforms(std::vector<Matrix>& animation_transform
 
 		auto parent_index = skeleton ? skeleton->GetBoneParentIndex(i) : -1;
 		auto parent_transform = (parent_index != -1) ? animation_transforms[parent_index] : Matrix::Identity;
-
+		
 		animation_transforms[i] = animation_transform * parent_transform;
 	}
 }
@@ -127,7 +127,7 @@ auto Animation::CalcInterpolatedRotation(const uint & animation_node_index, cons
 auto Animation::FindScaling(const uint & animation_node_index, const float & time) -> const int
 {
 	if (animation_nodes.empty() || animation_nodes[animation_node_index].scale_frames.empty())
-		return -1;
+		return 0;
 
 	auto& scale_frames = animation_nodes[animation_node_index].scale_frames;
 
@@ -137,13 +137,13 @@ auto Animation::FindScaling(const uint & animation_node_index, const float & tim
 			return i;
 	}
 
-	return -1;
+	return 0;
 }
 
 auto Animation::FindPosition(const uint & animation_node_index, const float & time) -> const int
 {
 	if (animation_nodes.empty() || animation_nodes[animation_node_index].position_frames.empty())
-		return -1;
+		return 0;
 
 	auto& position_frames = animation_nodes[animation_node_index].position_frames;
 
@@ -153,13 +153,13 @@ auto Animation::FindPosition(const uint & animation_node_index, const float & ti
 			return i;
 	}
 
-	return -1;
+	return 0;
 }
 
 auto Animation::FindRotation(const uint & animation_node_index, const float & time) -> const int
 {
 	if (animation_nodes.empty() || animation_nodes[animation_node_index].rotation_frames.empty())
-		return -1;
+		return 0;
 
 	auto& rotation_frames = animation_nodes[animation_node_index].rotation_frames;
 
@@ -169,5 +169,5 @@ auto Animation::FindRotation(const uint & animation_node_index, const float & ti
 			return i;
 	}
 
-	return -1;
+	return 0;
 }
