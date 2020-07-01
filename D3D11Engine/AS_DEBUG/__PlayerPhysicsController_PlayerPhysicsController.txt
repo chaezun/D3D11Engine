@@ -1,0 +1,29 @@
+PlayerPhysicsController::PlayerPhysicsController(Actor@)
+
+Temps: 1
+
+Variables: 
+ -002: Actor@ in_actor
+ 000: PlayerPhysicsController this
+
+
+- 7,8 -
+               VarDecl  0
+    0   1 *    SetV4    v1, 0x40000000          (i:1073741824, f:2)
+    2   1 *    LoadThisR v56, 134217758
+    4   1 *    WRTV4    v1
+- 8,8 -
+    5   1 *    SetV4    v1, 0x3dcccccd          (i:1036831949, f:0.1)
+    7   1 *    LoadThisR v60, 134217758
+    9   1 *    WRTV4    v1
+- 12,3 -
+   10   1 *    VAR      v-2
+   11   3 *    PshVPtr  v0
+   12   5 *    ADDSi    v32, 134217758
+   14   5 *    GETOBJREF 2
+   15   5 *    REFCPY   0x2204b1a34a0          (i:2337722217632, f:1.15499e-311)
+   18   3 *    PopPtr
+- 13,3 -
+            0:
+   19   1 *    FREE     v-2, 0x4b1a34a0          (type:Actor)
+   22   1 *    RET      4

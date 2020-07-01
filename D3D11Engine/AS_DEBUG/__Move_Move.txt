@@ -1,0 +1,40 @@
+Move::Move(Actor@)
+
+Temps: 2, 4
+
+Variables: 
+ -002: Actor@ in_actor
+ 000: Move this
+ 002: (heap) Actor {noname}
+ 004: (heap) Transform {noname}
+
+
+- 8,3 -
+               VarDecl  0
+    0   4 *    VAR      v-2
+    1   6 *    PshVPtr  v0
+    2   8 *    ADDSi    v32, 134217758
+    4   8 *    GETOBJREF 2
+    5   8 *    REFCPY   0x210bc3151f0          (i:2270900081136, f:1.12197e-311)
+    8   6 *    PopPtr
+- 9,3 -
+    9   4 *    PshVPtr  v0
+   10   6 *    ADDSi    v32, 134217758
+   12   6 *    RDSPtr
+   13   6 *    RefCpyV  v2, 0xbc3151f0          (type:Actor)
+   16   6 *    CALLSYS  116           (Transform& Actor::GetTransform())
+   18   4 *    PshRPtr
+   19   6 *    RefCpyV  v4, 0xbc315420          (type:Transform)
+   22   6 *    PopPtr
+   23   4 *    FREE     v2, 0xbc3151f0          (type:Actor)
+   26   4 *    VAR      v4
+   27   6 *    PshVPtr  v0
+   28   8 *    ADDSi    v40, 134217758
+   30   8 *    GETOBJREF 2
+   31   8 *    REFCPY   0x210bc315420          (i:2270900081696, f:1.12197e-311)
+   34   6 *    FREE     v4, 0xbc315420          (type:Transform)
+   37   6 *    PopPtr
+- 10,3 -
+            0:
+   38   4 *    FREE     v-2, 0xbc3151f0          (type:Actor)
+   41   4 *    RET      4
