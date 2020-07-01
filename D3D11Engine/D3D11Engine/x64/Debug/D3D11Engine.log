@@ -1,0 +1,17 @@
+﻿  D3D11Framework.lib(Engine.obj) : /GL로 컴파일한 MSIL .netmodule 또는 모듈이 있습니다. /LTCG를 지정하여 링크를 다시 시작하십시오. /LTCG를 링크 명령줄에 추가하면 링커 성능이 향상됩니다.
+LINK : warning LNK4075: '/INCREMENTAL'이(가) '/LTCG' 사양으로 인해 무시됩니다.
+     C:\Users\User\Desktop\GradPortfolio\D3D11GradPortfol\D3D11Engine\x64\Debug\D3D11Engine.lib 라이브러리 및 C:\Users\User\Desktop\GradPortfolio\D3D11GradPortfol\D3D11Engine\x64\Debug\D3D11Engine.exp 개체를 생성하고 있습니다.
+LINK : warning LNK4098: 'MSVCRT' defaultlib가 다른 라이브러리와 충돌합니다. /NODEFAULTLIB:library를 사용하십시오.
+  코드를 생성하고 있습니다.
+c:\users\user\desktop\gradportfolio\d3d11gradportfol\d3d11engine\d3d11framework\resource\animation.h(62): warning C4172: 지역 변수 또는 임시의 주소를 반환하고 있습니다.
+c:\users\user\desktop\gradportfolio\d3d11gradportfol\d3d11engine\d3d11framework\resource\animation.h(65): warning C4172: 지역 변수 또는 임시의 주소를 반환하고 있습니다.
+  코드를 생성했습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 fclose을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 fopen을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 fread을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 fseek을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 ftell을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4049: 지역으로 정의된 기호 strtol을(를) 가져왔습니다.
+D3D11Framework.lib(irrXML.obj) : warning LNK4099: 'irrxml.pdb' PDB를 'D3D11Framework.lib(irrXML.obj)' 또는 'C:\Users\User\Desktop\GradPortfolio\D3D11GradPortfol\D3D11Engine\x64\Debug\irrxml.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+D3D11Framework.lib(image.obj) : warning LNK4255: 라이브러리에 이름이 같은 개체가 여러 개 들어 있습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+  D3D11Engine.vcxproj -> C:\Users\User\Desktop\GradPortfolio\D3D11GradPortfol\D3D11Engine\x64\Debug\D3D11Engine.exe
