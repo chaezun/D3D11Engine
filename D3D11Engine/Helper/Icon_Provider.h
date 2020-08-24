@@ -2,6 +2,7 @@
 
 enum class IconType : uint
 {
+	//Component
 	Component_Option,
 	Component_Camera,
 	Component_Transform,
@@ -13,17 +14,21 @@ enum class IconType : uint
 	Component_Terrain,
 	Component_AudioSource,
 	Component_AudioListener,
+	Component_Animator,
 
+	//Log
 	Console_Info,
 	Console_Warning,
 	Console_Error,
 
+	//Button
 	Button_Option,
 	Button_Play,
 	Button_Stop,
 	Button_Pause,
 	Button_Remove,
 
+	//Folder & File
 	Thumbnail_Folder,
 	Thumbnail_File,
 	Thumbnail_Custom,

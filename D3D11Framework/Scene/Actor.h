@@ -57,7 +57,7 @@ public:
 	void RemoveComponent();
 
 private:
-	class Context* context=nullptr;
+	class Context* context = nullptr;
 	std::string name = NOT_ASSIGNED_STR;
 	bool is_active = true;
 
@@ -98,7 +98,7 @@ inline auto Actor::AddComponent() -> std::shared_ptr<T>
 	//if constexpr: 뒤의 else 문을 판별하지 않고 넘어감
 	if constexpr (std::is_same<T, Renderable>::value)
 	{
-		renderable=new_component;
+		renderable = new_component;
 	}
 
 	WORK_EVENT(EventType::Scene_Refresh);

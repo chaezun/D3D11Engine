@@ -28,7 +28,7 @@ public:
 	//============================================================================================
 	auto GetTextureImporter() -> const  std::shared_ptr<class TextureImporter>& { return texture_importer; }
 	auto GetModelImporter() -> const  std::shared_ptr<class ModelImporter>& { return model_importer; }
-    
+
 	//============================================================================================
 	// [Resource]
 	//============================================================================================
@@ -82,24 +82,18 @@ inline auto ResourceManager::Load(const std::string & path) -> std::shared_ptr<T
 	auto relative_path = FileSystem::GetRelativeFromPath(path); //경로를 상대경로로 변환
 	auto resource_name = FileSystem::GetIntactFileNameFromPath(relative_path); //상대경로를 통해 파일이름을 구함
 
-	if (HasResource(resource_name, IResource::DeduceResourceType<T>())) //리소스 이름과 리소스 타입이 일치하는 것이 있는지 판별
-		return GetResourceFromName<T>(resource_name);
+	auto resource = std::make_shared<T>(context);
+	resource->SetResourceName(resource_name);
+	resource->SetResourcePath(relative_path);
 
-	else //일치하는 것이 없다면 새로 생성함
+	if (!resource->LoadFromFile(relative_path))
 	{
-		auto resource = std::make_shared<T>(context);
-		resource->SetResourceName(resource_name);
-		resource->SetResourcePath(relative_path);
-
-		if (!resource->LoadFromFile(relative_path))
-		{
-			return nullptr;
-		}
-
-		RegisterResource<T>(resource);
-
-		return resource;
+		return nullptr;
 	}
+
+	RegisterResource<T>(resource);
+
+	return resource;
 }
 
 template<typename T>
@@ -109,8 +103,8 @@ inline auto ResourceManager::GetResourceFromName(const std::string & name) -> st
 
 	for (const auto& resource : resource_groups[IResource::DeduceResourceType<T>()])
 	{
-		if(resource->GetResourceName()==name)
-		return std::static_pointer_cast<T>(resource);
+		if (resource->GetResourceName() == name)
+			return std::static_pointer_cast<T>(resource);
 	}
 
 	return nullptr;

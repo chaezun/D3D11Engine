@@ -42,7 +42,7 @@ public:
 	void SetBoundBox(const BoundBox& aabb) { this->aabb = aabb; }
 
 	//=================================================================================================
-	// [Mesh]
+	// [Animation]
 	//=================================================================================================
 	auto GetHasAnimation() const { return has_animation; }
 	void SetHasAnimation(const bool& has_animation) { this->has_animation = has_animation; }

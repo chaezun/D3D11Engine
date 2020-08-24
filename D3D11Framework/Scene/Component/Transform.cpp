@@ -217,7 +217,7 @@ void Transform::AcquireChild()
 			if(!actor)
 			  continue;
 
-            auto child=actor->GetTransform();
+            auto child = actor->GetTransform();
 
 			if(!child->HasParent())
 			  continue;

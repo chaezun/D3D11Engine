@@ -86,6 +86,14 @@ void Animator::SetAnimations(const std::map<std::string, std::shared_ptr<Animati
 {
 	this->animations.clear();
 	this->animations = animations;
+
+	//애니메이션의 이름을 추가
+	this->animation_name.clear();
+	for (auto& animation : this->animations)
+	{
+		animation_name.emplace_back(animation.second->GetName());
+	}
+
 }
 
 auto Animator::GetAnimation(const std::string & name) -> std::shared_ptr<Animation>
@@ -107,9 +115,21 @@ void Animator::AddAnimation(const std::string & name, const std::shared_ptr<Anim
 		return;
 	}
 
-	//TODO : bone matching
-
 	animations[name] = animation;
+}
+
+auto Animator::GetAnimationName(const int & index) -> const std::string
+{
+	//애니메이션의 이름을 저장한 벡터에 항목이 1개이상 존재한다면
+	if(animation_name.size() > index)
+	{
+		return animation_name[index];
+	}
+
+	//인덱스 값이 애니메이션 이름을 저장한 벡터의 크기와 같거나 큰경우
+	//해당 인덱스에는 값이 존재하지 않으므로
+	else
+		return NOT_ASSIGNED_STR;
 }
 
 void Animator::UpdateConstantBuffer()

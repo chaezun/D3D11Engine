@@ -12,7 +12,7 @@
 
 using namespace std::filesystem;
 
-//지원되는 확장자들(인터넷 서칭을 통해 조사함)
+//Texture에 지원되는 확장자들
 std::vector<std::string> FileSystem::supported_texture_formats
 {
 	".jpg",
@@ -49,6 +49,7 @@ std::vector<std::string> FileSystem::supported_texture_formats
 	".xpm"
 };
 
+//Model에 지원되는 확장자들
 std::vector<std::string> FileSystem::supported_model_formats
 {
 	".3ds",
@@ -85,11 +86,13 @@ std::vector<std::string> FileSystem::supported_model_formats
 	".ndo"
 };
 
+//Script에 지원되는 확장자들
 std::vector<std::string> FileSystem::supported_script_formats
 {
 	".as",
 };
 
+//Audio에 지원되는 확장자들
 std::vector<std::string> FileSystem::supported_audio_formats
 {
 	".aiff",
@@ -374,6 +377,15 @@ auto FileSystem::GetWorkingDirectory() -> const std::string
 	return current_path().generic_string() + "/"; //path->string 으로 자료형 변환
 }
 
+auto FileSystem::GetFileDataNameFromPath(const std::string & path) -> const std::string
+{
+	auto file_name = GetIntactFileNameFromPath(path); //순수 파일이름을 추출
+	auto first_index = file_name.find_first_of('_'); //_으로 끝
+	auto file_data_name = file_name.substr(first_index + 1, file_name.size());
+
+	return file_data_name;
+}
+
 auto FileSystem::GetDirectoriesInDirectory(const std::string & directory) -> const std::vector<std::string>
 {
 	std::vector<std::string> directories;
@@ -406,6 +418,7 @@ auto FileSystem::GetFilesInDirectory(const std::string & directory) -> const std
 	return files;
 }
 
+//Texture
 auto FileSystem::IsSupportedTextureFile(const std::string & path) -> const bool
 {
 
@@ -422,6 +435,7 @@ auto FileSystem::IsSupportedTextureFile(const std::string & path) -> const bool
 	return false;
 }
 
+//Model
 auto FileSystem::IsSupportedModelFile(const std::string & path) -> const bool
 {
 	auto file_extension = GetExtensionFromPath(path);
@@ -429,6 +443,7 @@ auto FileSystem::IsSupportedModelFile(const std::string & path) -> const bool
 
 	for (const auto& format : supported_formats)
 	{
+		//대소문자 비교포함
 		if (file_extension == format || file_extension == ToUppercase(format))
 			return true;
 	}
@@ -436,6 +451,7 @@ auto FileSystem::IsSupportedModelFile(const std::string & path) -> const bool
 	return false;
 }
 
+//Script
 auto FileSystem::IsSupportedScriptFile(const std::string & path) -> const bool
 {
 	auto file_extension = GetExtensionFromPath(path);
@@ -443,6 +459,7 @@ auto FileSystem::IsSupportedScriptFile(const std::string & path) -> const bool
 
 	for (const auto& format : supported_formats)
 	{
+		//대소문자 비교포함
 		if (file_extension == format || file_extension == ToUppercase(format))
 			return true;
 	}
@@ -450,6 +467,7 @@ auto FileSystem::IsSupportedScriptFile(const std::string & path) -> const bool
 	return false;
 }
 
+//Audio
 auto FileSystem::IsSupportedAudioFile(const std::string & path) -> const bool
 {
 	auto file_extension = GetExtensionFromPath(path);
@@ -457,6 +475,7 @@ auto FileSystem::IsSupportedAudioFile(const std::string & path) -> const bool
 
 	for (const auto& format : supported_formats)
 	{
+		//대소문자 비교포함
 		if (file_extension == format || file_extension == ToUppercase(format))
 			return true;
 	}
@@ -514,6 +533,22 @@ auto FileSystem::ToWString(const std::string & str) -> const std::wstring
 	result.assign(str.begin(), str.end());
 
 	return result;
+}
+
+const char * FileSystem::ConvertStringToChar(const std::string & message)
+{
+	char buf[BUFSIZ + 1];
+
+	strcpy(buf, message.c_str());
+
+	return buf;
+}
+
+const std::string FileSystem::ConvertCharToString(const char * message)
+{
+	std::string str(message);
+
+	return str;
 }
 
 void FileSystem::ReplaceAll(std::string & in_out_str, const std::string & from, const std::string & to)

@@ -48,8 +48,8 @@ public:
 	auto GetAnimations() const -> const std::map<std::string, std::shared_ptr<Animation>>& { return animations; }
 	void AddAnimation(const std::string& name, const std::shared_ptr<Animation>& animation);
 	auto FindAnimation(const std::string& name) -> const std::shared_ptr<Animation>;
-	auto GetHasAnimation() const { return has_animation; }
-	void SetHasAnimation(const bool& has_animation) { this->has_animation = has_animation; }
+	void SetAnimationCount(const uint& animation_count) { this->animation_count = animation_count; }
+	auto GetAnimationCount() -> const uint& { return animation_count; }
 
 	//=================================================================================================
 	// [Directory]
@@ -73,7 +73,7 @@ private:
 
 	std::map<std::string, std::shared_ptr<Animation>> animations;
 	std::shared_ptr<Skeleton> skeleton;
-	bool has_animation       = false;
+	uint animation_count = 0;
 
     std::string model_directory="";
 	std::string mesh_directory = "";

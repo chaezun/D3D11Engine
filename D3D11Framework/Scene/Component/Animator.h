@@ -42,6 +42,8 @@ public:
 
 	auto GetAnimation(const std::string& name)->std::shared_ptr<Animation>;
 	void AddAnimation(const std::string& name, const std::shared_ptr<Animation>& animation);
+	auto GetAnimationCount() -> const int& { return animations.size(); }
+	auto GetAnimationName(const int& index) -> const std::string;
 
 	auto GetConstantBuffer() const -> const std::shared_ptr<ConstantBuffer>& { return gpu_buffer; }
 	void UpdateConstantBuffer();
@@ -52,6 +54,7 @@ private:
 
 	std::weak_ptr<Animation> current_animation;
 	std::map<std::string, std::shared_ptr<Animation>> animations;
+	std::vector<std::string> animation_name;
 
 	std::shared_ptr<Skeleton> skeleton;
 	std::vector<Matrix> skinned_transforms;

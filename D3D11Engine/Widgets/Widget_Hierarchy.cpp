@@ -92,7 +92,7 @@ void Widget_Hierarchy::AddActor(const std::shared_ptr<class Actor>& actor)
 
    if (const auto selected_actor = Editor_Helper::Get().selected_actor.lock())
    {
-	   const auto is_selected = selected_actor ->GetID() == actor->GetID();
+	   const auto is_selected = selected_actor->GetID() == actor->GetID();
 	   flags |= is_selected ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None;
    }
 
@@ -100,7 +100,7 @@ void Widget_Hierarchy::AddActor(const std::shared_ptr<class Actor>& actor)
    const auto is_node_open = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<intptr_t>(actor->GetID())), flags, actor->GetName().c_str());
 
    if (ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly))
-      Hierarchy_Data::hovered_actor=actor.get();
+      Hierarchy_Data::hovered_actor = actor.get();
 
    if (is_node_open)
    {
@@ -141,7 +141,7 @@ void Widget_Hierarchy::ClickedItem()
 void Widget_Hierarchy::SelectedItem(const std::shared_ptr<class Actor>& actor)
 {
     is_expand_to_show_actor=true;
-	Editor_Helper::Get().selected_actor=actor;
+	Editor_Helper::Get().selected_actor = actor;
 }
 
 auto Widget_Hierarchy::CreateEmptyActor() -> std::shared_ptr<class Actor>

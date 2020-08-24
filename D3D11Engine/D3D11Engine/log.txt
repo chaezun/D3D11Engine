@@ -1,1 +1,0 @@
-Info : Thread::Initialize : 7 thread have been created

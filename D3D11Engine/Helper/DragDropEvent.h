@@ -7,7 +7,6 @@ enum class PayloadType : uint
 	Unknown,
 	Texture,
 	Model,
-	Actor,
 	Audio,
 	Script
 };
@@ -45,7 +44,7 @@ public:
 	{
 		if (ImGui::BeginDragDropTarget())
 		{
-		   if(const auto payload=ImGui::AcceptDragDropPayload(reinterpret_cast<const char*>(&type)))
+		   if(const auto payload = ImGui::AcceptDragDropPayload(reinterpret_cast<const char*>(&type)))
 		      return static_cast<DragDropPayload*>(payload->Data);
 
 		   ImGui::EndDragDropTarget();

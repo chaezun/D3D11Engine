@@ -1,10 +1,12 @@
 #pragma once
 
+//Assimp : 모델 Importing 라이브러리(Open Asset Import Library)
 //aiScene객체에는 모델의 material, mesh들이 포함되어 있음.
 struct ModelParameter final
 {
 	const struct aiScene* scene = nullptr;
 	class Model* model = nullptr;
+	std::shared_ptr<Renderable> renderable ;
 	std::string path = "";
 	std::string name = "";
 	uint triangle_limit = 0;
@@ -20,14 +22,18 @@ public:
 	ModelImporter(class Context* context);
 	~ModelImporter() = default;
 
+	//애니메이션 정보를 제외한 나머지 정보를 추출하는 함수
 	auto Load(class Model* model, const std::string& path) -> const bool;
+	//LoadAnimation은 Load가 선행되고 실행시켜야하는 함수
+	//애니메이션 정보를 추출하는 함수
+	auto LoadAnimation(class Model* model, const std::string& path) -> const bool;
 
 private:
 	//Parsing
 	void ParseNodeHierarchy(struct aiNode* assimp_node);
 	void ParseNode(const struct aiNode* assimp_node, const ModelParameter& parameter, class Actor* parent_node = nullptr, class Actor* new_actor = nullptr);
 	void ParseNodeMeshes(const struct aiNode* assimp_node, class Actor* new_actor, const ModelParameter& parameter);
-	void ParseAnimations(const ModelParameter& parameter);
+	void ParseAnimations(const ModelParameter& parameter, const std::string& animation_name);
 
 	//Loading
 	void LoadMesh(struct aiMesh* assimp_mesh, class Actor* parent_actor, const ModelParameter& parameter);

@@ -43,7 +43,6 @@ auto Ray::Trace(Context * context) const -> const std::vector<RayHit>
 	return hits;
 }
 
-//°úÁ¦
 auto Ray::HitDistance(const BoundBox & bound_box) const -> const float
 {
 	if (!bound_box.IsDefined())

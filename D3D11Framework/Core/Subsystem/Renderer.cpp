@@ -81,7 +81,6 @@ void Renderer::AcquireRenderables(Scene * scene)
 			continue;
 		//
         auto skybox_component = actor->GetComponent<SkyBox>();
-
 		auto renderable_component = actor->GetComponent<Renderable>();
 		auto light_component = actor->GetComponent<Light>();
 		auto camera_component = actor->GetComponent<Camera>();

@@ -30,6 +30,8 @@ public:
 	void AddBone(const Bone& bone);
 	void AddBone(const std::string& name, const int& parent_index, const Matrix& offset);
 
+	void DeleteBone(const std::string& name);
+
 	auto FindBoneIndex(const std::string& name) -> const int;
 	auto FindBone(const std::string& name)->Bone*;
 	auto FindBone(const uint& bone_index)->Bone*;

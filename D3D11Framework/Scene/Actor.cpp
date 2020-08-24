@@ -22,8 +22,8 @@ void Actor::Initialize(const std::shared_ptr<class Transform>& transform)
 
 void Actor::Start()
 {
-	/*if (!is_active)
-		return;*/
+	if (!is_active)
+		return;
 
 	for (const auto& component : components)
 	{
@@ -38,8 +38,8 @@ void Actor::Start()
 
 void Actor::Update()
 {
-	/*if (!is_active)
-		return;*/
+	if (!is_active)
+		return;
 
 	for (const auto& component : components)
 	{

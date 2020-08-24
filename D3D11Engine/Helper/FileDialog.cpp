@@ -241,7 +241,7 @@ void FileDialog::ShowMiddle()
 							ImGui::SetCursorScreenPos(ImVec2(label_rect.Min.x, label_rect.Min.y));
 							ImGui::PushItemWidth(item_size.x);
 							static std::string change_name = "";
-							is_change =ImGui::InputText("", &change_name, ImGuiInputTextFlags_EnterReturnsTrue);
+							is_change = ImGui::InputText("", &change_name, ImGuiInputTextFlags_EnterReturnsTrue);
 							if (ImGui::IsMouseClicked(1) && FileDialog_Data::is_hovered_window && !FileDialog_Data::is_hovered_item)
 							{
 								is_change_script_name = false;
@@ -328,6 +328,7 @@ void FileDialog::ItemDrag(FileDialogItem * item) const
 	if (!item || type != FileDialogType::Browser)
 		return;
 
+	//payload 데이터 생성
 	if (ImGui::BeginDragDropSource())
 	{
 		const auto set_payload = [](const PayloadType& type, const std::string& path)
@@ -337,10 +338,19 @@ void FileDialog::ItemDrag(FileDialogItem * item) const
 			DragDropEvent::CreateDragDropPayload(FileDialog_Data::payload);
 		};
 
-		if (FileSystem::IsSupportedTextureFile(item->GetPath()))    set_payload(PayloadType::Texture, item->GetPath());
-		if (FileSystem::IsSupportedModelFile(item->GetPath()))     set_payload(PayloadType::Model, item->GetPath());
-		if (FileSystem::IsSupportedScriptFile(item->GetPath()))     set_payload(PayloadType::Script, item->GetPath());
-		if (FileSystem::IsSupportedAudioFile(item->GetPath()))      set_payload(PayloadType::Audio, item->GetPath());
+		//Texture
+		if (FileSystem::IsSupportedTextureFile(item->GetPath()))
+			set_payload(PayloadType::Texture, item->GetPath());
+		//Model or Animation
+		if (FileSystem::IsSupportedModelFile(item->GetPath()))
+			set_payload(PayloadType::Model, item->GetPath());
+	
+		//Script
+		if (FileSystem::IsSupportedScriptFile(item->GetPath()))
+			set_payload(PayloadType::Script, item->GetPath());
+		//Audio
+		if (FileSystem::IsSupportedAudioFile(item->GetPath()))
+			set_payload(PayloadType::Audio, item->GetPath());
 
 		ImGui::Image(item->GetTexture()->GetShaderResourceView(), ImVec2(50.0f, 50.0f));
 

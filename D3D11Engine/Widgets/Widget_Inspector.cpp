@@ -7,6 +7,7 @@
 #include "Scene/Component/Script.h"
 #include "Scene/Component/AudioSource.h"
 #include "Scene/Component/AudioListener.h"
+#include "Scene/Component/Animator.h"
 
 namespace Inspector_Data
 {
@@ -99,6 +100,9 @@ void Widget_Inspector::Render()
 		auto terrain = actor->GetComponent<Terrain>();
 		ShowTerrain(terrain);
 
+		auto animator = actor->GetComponent<Animator>();
+		ShowAnimation(animator);
+
 		auto script = actor->GetComponent<Script>();
 		ShowScript(script);
 
@@ -144,7 +148,7 @@ void Widget_Inspector::ShowTransform(std::shared_ptr<class Transform>& transform
 			ImGui::TextUnformatted(label); //라벨(Position, Rotation, Scale)
 			show_float("X", &value.x); ImGui::SameLine(100.0f); //같은 라인에 시작부터 100만큼 떨어진 곳부터
 			show_float("Y", &value.y); ImGui::SameLine(185.0f); //같은 라인에 시작부터 185만큼 떨어진 곳부터
-			show_float("Z", &value.z); 
+			show_float("Z", &value.z);
 			ImGui::EndGroup();
 		};
 
@@ -270,6 +274,85 @@ void Widget_Inspector::ShowTerrain(std::shared_ptr<class Terrain>& terrain) cons
 		}
 	}
 	Inspector_Data::ComponentEnd();
+}
+
+void Widget_Inspector::ShowAnimation(std::shared_ptr<class Animator>& animator)
+{
+	//애니메이션을 관리하는 애니메이터가 없는 경우 함수 탈출
+	if (!animator)
+		return;
+
+	if (Inspector_Data::ComponentBegin("Animation", IconType::Component_Animator, animator))
+	{
+		//현재 선택된 엑터의 이름을 저장
+		auto actor_name = Editor_Helper::Get().selected_actor.lock()->GetName();
+		//ResourceManager에 현재 선택된 엑터와 같은 이름을 가진 모델이 존재한다면 수행
+		if (auto actor_model = Editor_Helper::Get().resource_manager->GetResourceFromName<Model>(actor_name))
+		{
+			if (ImGui::Button("Animation List"))
+			{
+				ImGui::OpenPopup("##AnimationListPopup");
+			}
+
+			if (ImGui::BeginPopup("##AnimationListPopup"))
+			{
+				for (int i = 0; i < animator->GetAnimationCount(); ++i)
+				{
+					auto animation_name = animator->GetAnimationName(i);
+					if (ImGui::MenuItem(animation_name.c_str()))
+					{
+						animator->SetCurrentAnimation(animation_name);
+					}
+				}
+				ImGui::EndPopup();
+			}
+			
+			//Add Animation버튼을 누른 횟수만큼 Animation Editor를 보여줌
+			for (int i = 0; i < actor_model->GetAnimationCount(); ++i)
+			{
+				auto animation_name = animator->GetAnimationName(i);
+
+				ImGui::TextUnformatted("Animation");
+				ImGui::SameLine(100.0f);
+				ImGui::PushItemWidth(250.0f);
+				ImGui::InputText("##AnimationName", &animation_name, ImGuiInputTextFlags_ReadOnly);
+				ImGui::PopItemWidth();
+
+				//게임모드가 아닐 경우(편집모드)에만 사용가능
+				if (!Engine::IsFlagEnabled(EngineFlags_Game))
+				{
+					//애니메이션 추가
+					if (auto payload = DragDropEvent::ReceiveDragDropPayload(PayloadType::Model))
+					{
+						actor_model->LoadFromFile(std::get<const char*>(payload->data));
+					}
+				}
+			}
+		}
+		ShowAddAnimationButton();
+	}
+	Inspector_Data::ComponentEnd();
+}
+
+void Widget_Inspector::ShowAddAnimationButton()
+{
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 50.0f);
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
+	//게임모드가 아닐 경우(편집모드)에만 사용가능
+	if (!Engine::IsFlagEnabled(EngineFlags_Game))
+	{
+		if (ImGui::Button("Add Animation"))
+		{
+			//현재 선택된 엑터의 이름을 저장
+			auto actor_name = Editor_Helper::Get().selected_actor.lock()->GetName();
+			//선택된 엑터와 같은 이름을 가진 모델을 저장
+			auto actor_model = Editor_Helper::Get().resource_manager->GetResourceFromName<Model>(actor_name);
+
+			uint animation_count = actor_model->GetAnimationCount();
+			animation_count++; //애니메이션을 추가할 칸을 증가
+			actor_model->SetAnimationCount(animation_count);
+		}
+	}
 }
 
 void Widget_Inspector::ShowMaterial(std::shared_ptr<class Material>& material) const
@@ -487,6 +570,7 @@ void Widget_Inspector::ShowAudioListener(std::shared_ptr<class AudioListener>& a
 	Inspector_Data::ComponentEnd();
 }
 
+//AddComponent Button 출력
 void Widget_Inspector::ShowAddComponentButton()
 {
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 50.0f);
@@ -497,15 +581,22 @@ void Widget_Inspector::ShowAddComponentButton()
 	ShowComponentPopup();
 }
 
+//AddComponent Button 클릭 후 출력되는 Button들 출력
 void Widget_Inspector::ShowComponentPopup()
 {
 	if (ImGui::BeginPopup("##ComponentPopup"))
 	{
 		if (auto actor = Editor_Helper::Get().selected_actor.lock())
 		{
+			//Animation
+			if (ImGui::MenuItem("Animation"))
+				actor->AddComponent<Animator>();
+
+			//Script
 			if (ImGui::MenuItem("Script"))
 				actor->AddComponent<Script>();
 
+			//Audio
 			if (ImGui::BeginMenu("Audio"))
 			{
 				if (ImGui::MenuItem("AudioSource"))
@@ -514,9 +605,7 @@ void Widget_Inspector::ShowComponentPopup()
 					actor->AddComponent<AudioListener>();
 				ImGui::EndMenu();
 			}
-
 		}
-
 		ImGui::EndPopup();
 	}
 }

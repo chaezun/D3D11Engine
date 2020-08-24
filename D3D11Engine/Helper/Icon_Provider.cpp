@@ -7,29 +7,34 @@ void Icon_Provider::Initialize(Context * context)
 
 	auto directory = context->GetSubsystem<ResourceManager>()->GetAssetDirectory();
 
-	Load(directory + "Icon/component_Camera.png", IconType::Component_Camera);
-	Load(directory + "Icon/component_Transform.png", IconType::Component_Transform);
-	Load(directory + "Icon/component_renderable.png", IconType::Component_Renderable);
-	Load(directory + "Icon/component_RigidBody.png", IconType::Component_RigidBody);
-	Load(directory + "Icon/component_Collider.png", IconType::Component_Collider);
-	Load(directory + "Icon/component_Material.png", IconType::Component_Material);
-	Load(directory + "Icon/component_Script.png", IconType::Component_Script);
-	Load(directory + "Icon/component_terrain.png", IconType::Component_Terrain);
-	Load(directory + "Icon/component_AudioListener.png", IconType::Component_AudioListener);
-	Load(directory + "Icon/component_AudioSource.png", IconType::Component_AudioSource);
+	//Component Icon
+	Load(directory + "Icon/Component_Camera.png", IconType::Component_Camera);
+	Load(directory + "Icon/Component_Transform.png", IconType::Component_Transform);
+	Load(directory + "Icon/Component_Renderable.png", IconType::Component_Renderable);
+	Load(directory + "Icon/Component_RigidBody.png", IconType::Component_RigidBody);
+	Load(directory + "Icon/Component_Collider.png", IconType::Component_Collider);
+	Load(directory + "Icon/Component_Material.png", IconType::Component_Material);
+	Load(directory + "Icon/Component_Script.png", IconType::Component_Script);
+	Load(directory + "Icon/Component_Terrain.png", IconType::Component_Terrain);
+	Load(directory + "Icon/Component_AudioListener.png", IconType::Component_AudioListener);
+	Load(directory + "Icon/Component_AudioSource.png", IconType::Component_AudioSource);
+	Load(directory + "Icon/Component_Animator.png", IconType::Component_Animator);
 
-	Load(directory + "Icon/log_info.png", IconType::Console_Info);
-	Load(directory + "Icon/log_warning.png", IconType::Console_Warning);
-	Load(directory + "Icon/log_error.png", IconType::Console_Error);
+	//Log Icon
+	Load(directory + "Icon/Log_Info.png", IconType::Console_Info);
+	Load(directory + "Icon/Log_Warning.png", IconType::Console_Warning);
+	Load(directory + "Icon/Log_Error.png", IconType::Console_Error);
 
-	Load(directory + "Icon/option_button.png", IconType::Button_Option);
-	Load(directory + "Icon/big_play_button.png", IconType::Button_Play);
-	Load(directory + "Icon/stopButton.png", IconType::Button_Stop);
-	Load(directory + "Icon/pauseButton.png", IconType::Button_Pause);
-	Load(directory + "Icon/remove_button.png", IconType::Button_Remove);
+	//Button Icon
+	Load(directory + "Icon/Option_Button.png", IconType::Button_Option);
+	Load(directory + "Icon/Play_Button.png", IconType::Button_Play);
+	Load(directory + "Icon/Stop_Button.png", IconType::Button_Stop);
+	Load(directory + "Icon/Pause_Button.png", IconType::Button_Pause);
+	Load(directory + "Icon/Remove_Button.png", IconType::Button_Remove);
 
-	Load(directory + "Icon/folder.png", IconType::Thumbnail_Folder);
-	Load(directory + "Icon/file.png", IconType::Thumbnail_File);
+	//Folder & File Icon
+	Load(directory + "Icon/Folder.png", IconType::Thumbnail_Folder);
+	Load(directory + "Icon/File.png", IconType::Thumbnail_File);
 }
 
 auto Icon_Provider::Load(const std::string & path, const IconType & type) -> Thumbnail *

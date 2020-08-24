@@ -7,161 +7,176 @@
 #include "Importer/ModelImporter.h"
 
 Model::Model(Context * context)
-    :IResource(context, ResourceType::Model)
+	:IResource(context, ResourceType::Model)
 {
 }
 
 Model::~Model()
 {
-    meshes.clear();
-    meshes.shrink_to_fit();
+	meshes.clear();
+	meshes.shrink_to_fit();
 
-    materials.clear();
-    materials.shrink_to_fit();
+	materials.clear();
+	materials.shrink_to_fit();
 
 	animations.clear();
 }
 
 const bool Model::SaveToFile(const std::string & path)
 {
-    return false;
+	return false;
 }
 
 const bool Model::LoadFromFile(const std::string & path)
 {
-    auto resource_manager = context->GetSubsystem<ResourceManager>();
+	auto resource_manager = context->GetSubsystem<ResourceManager>();
 
-    SetWorkingDirectories(resource_manager->GetProjectDirectory() + FileSystem::GetIntactFileNameFromPath(path));
-    SetResourcePath(model_directory + FileSystem::GetIntactFileNameFromPath(path) + MODEL_BIN_EXTENSION);
-    SetResourceName(FileSystem::GetIntactFileNameFromPath(path));
+	//Model의 Mesh데이터인 경우
+	if ((FileSystem::GetFileDataNameFromPath(path) == "Mesh"))
+	{
+		
+		SetWorkingDirectories(resource_manager->GetProjectDirectory() + FileSystem::GetIntactFileNameFromPath(path));
+		SetResourcePath(model_directory + FileSystem::GetIntactFileNameFromPath(path) + MODEL_BIN_EXTENSION);
+		SetResourceName(FileSystem::GetIntactFileNameFromPath(path));
 
-    if (resource_manager->GetModelImporter()->Load(this, path))
-    {
-		normalize_scale = ComputeNormalizedScale();
-		root_actor->GetTransform()->SetScale(normalize_scale);
-		root_actor->GetTransform()->UpdateTransform();
-
-		if (has_animation)
+		//애니메이션을 제외한 모델의 모든 데이터를 추출
+		if (resource_manager->GetModelImporter()->Load(this, path))
 		{
-			auto animator = root_actor->AddComponent<Animator>();
-			animator->SetAnimations(animations);
-			animator->SetSkeleton(skeleton);
-
-			animator->SetCurrentAnimation("mixamo.com");
+			normalize_scale = ComputeNormalizedScale();
+			root_actor->GetTransform()->SetScale(normalize_scale);
+			root_actor->GetTransform()->UpdateTransform();
 		}
+		return true;
+	}
 
-        SaveToFile(resource_path);
-        return true;
-    }
+	//Model의 Animation데이터인 경우
+	else
+	{
+		//현재 추가된 애니메이션이 기존 애니메이션 목록에 없는 경우
+		if (!FindAnimation(FileSystem::GetIntactFileNameFromPath(path)))
+		{
+			//애니메이션 데이터 추출
+			if (resource_manager->GetModelImporter()->LoadAnimation(this, path))
+			{
+				//Widget_Inspector에서 actor의 Animator를 추가했으므로 받아올 수 있음
+				auto animator = root_actor->GetComponent<Animator>();
+				//애니메이터에 애니메이션 저장
+				animator->SetAnimations(animations);
+				//애니메이터에 Bone 데이터 저장
+				animator->SetSkeleton(skeleton);
+			}
+		}
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 auto Model::GetMaterial(const uint & index) -> std::shared_ptr<Material>
 {
-    if (index >= materials.size())
-    {
-        LOG_ERROR("Invalid parameter, out of range");
-        return nullptr;
-    }
+	if (index >= materials.size())
+	{
+		LOG_ERROR("Invalid parameter, out of range");
+		return nullptr;
+	}
 
-    return materials[index];
+	return materials[index];
 }
 
 void Model::AddMaterial(const std::shared_ptr<Material>& material, const std::shared_ptr<class Renderable>& renderable)
 {
-    if (!material || !renderable)
-    {
-        LOG_ERROR("Invalid parameter");
-        return;
-    }
+	if (!material || !renderable)
+	{
+		LOG_ERROR("Invalid parameter");
+		return;
+	}
 
-    material->SetResourcePath(material_directory + material->GetResourceName() + MATERIAL_BIN_EXTENSION);
-    material->SaveToFile(material->GetResourcePath());
-    materials.emplace_back(material);
+	material->SetResourcePath(material_directory + material->GetResourceName() + MATERIAL_BIN_EXTENSION);
+	material->SaveToFile(material->GetResourcePath());
+	materials.emplace_back(material);
 
-    renderable->SetMaterial(material);
+	renderable->SetMaterial(material);
 }
 
 void Model::AddTexture(const std::shared_ptr<Material>& material, const TextureType & texture_type, const std::string & path)
 {
-    if (!material || path == NOT_ASSIGNED_STR)
-    {
-        LOG_ERROR("Invalid parameter");
-        return;
-    }
+	if (!material || path == NOT_ASSIGNED_STR)
+	{
+		LOG_ERROR("Invalid parameter");
+		return;
+	}
 
-    const auto texture_name = FileSystem::GetIntactFileNameFromPath(path);
-    auto texture = context->GetSubsystem<ResourceManager>()->GetResourceFromName<Texture2D>(texture_name);
+	const auto texture_name = FileSystem::GetIntactFileNameFromPath(path);
+	auto texture = context->GetSubsystem<ResourceManager>()->GetResourceFromName<Texture2D>(texture_name);
 
-    if (texture)
-        material->SetTexture(texture_type, texture);
-    else
-    {
-        texture = std::make_shared<Texture2D>(context);
-        texture->LoadFromFile(path);
-        texture->SetResourcePath(texture_directory + texture_name + TEXTURE_BIN_EXTENSION);
-        texture->SetResourceName(texture_name);
-        texture->SaveToFile(texture->GetResourcePath());
-        texture->ClearMipChain();
+	if (texture)
+		material->SetTexture(texture_type, texture);
+	else
+	{
+		texture = std::make_shared<Texture2D>(context);
+		texture->LoadFromFile(path);
+		texture->SetResourcePath(texture_directory + texture_name + TEXTURE_BIN_EXTENSION);
+		texture->SetResourceName(texture_name);
+		texture->SaveToFile(texture->GetResourcePath());
+		texture->ClearMipChain();
 
-        material->SetTexture(texture_type, texture);
-    }
+		material->SetTexture(texture_type, texture);
+	}
 }
 
 auto Model::GetMesh(const uint & index) -> std::shared_ptr<Mesh>
 {
-    if (index >= meshes.size())
-    {
-        LOG_ERROR("Invalid parameter, out of range");
-        return nullptr;
-    }
+	if (index >= meshes.size())
+	{
+		LOG_ERROR("Invalid parameter, out of range");
+		return nullptr;
+	}
 
-    return meshes[index];
+	return meshes[index];
 }
 
 void Model::AddMesh(const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<class Renderable>& renderable)
 {
-    if (!mesh || !renderable)
-    {
-        LOG_ERROR("Invalid parameter");
-        return;
-    }
+	if (!mesh || !renderable)
+	{
+		LOG_ERROR("Invalid parameter");
+		return;
+	}
 
 	bound_box = BoundBox(mesh->GetVertices());
 
-    mesh->SetResourcePath(mesh_directory + mesh->GetResourceName() + MESH_BIN_EXTENSION);
-    mesh->SaveToFile(mesh->GetResourcePath());
-    meshes.emplace_back(mesh);
+	mesh->SetResourcePath(mesh_directory + mesh->GetResourceName() + MESH_BIN_EXTENSION);
+	mesh->SaveToFile(mesh->GetResourcePath());
+	meshes.emplace_back(mesh);
 
-    renderable->SetMesh(mesh);
+	renderable->SetMesh(mesh);
 	renderable->SetBoundBox(bound_box);
 }
 
 void Model::AddMesh(const std::vector<VertexTextureNormalTangent>& vertices, const std::vector<uint>& indices, const std::shared_ptr<class Renderable>& renderable)
 {
-    if (vertices.empty() || indices.empty() || !renderable)
-    {
-        LOG_ERROR("Invalid parameter");
-        return;
-    }
+	if (vertices.empty() || indices.empty() || !renderable)
+	{
+		LOG_ERROR("Invalid parameter");
+		return;
+	}
 
-    auto mesh = std::make_shared<Mesh>(context);
-    mesh->SetVertices(vertices);
-    mesh->SetIndices(indices);
-    mesh->CreateBuffers();
-    //TODO: mesh name
+	auto mesh = std::make_shared<Mesh>(context);
+	mesh->SetVertices(vertices);
+	mesh->SetIndices(indices);
+	mesh->CreateBuffers();
+	//TODO: mesh name
 
 
-    AddMesh(mesh, renderable);
+	AddMesh(mesh, renderable);
 }
 
 void Model::AddBone(const std::string & name, const int & parent_index, const Matrix & offset)
 {
-   if(!skeleton)
-     skeleton = std::make_shared<Skeleton>(context);
+	if (!skeleton)
+		skeleton = std::make_shared<Skeleton>(context);
 
-   skeleton->AddBone(name, parent_index, offset);
+	skeleton->AddBone(name, parent_index, offset);
 }
 
 void Model::AddBone(const Bone & bone)
@@ -215,6 +230,7 @@ void Model::AddAnimation(const std::string & name, const std::shared_ptr<Animati
 
 	animation->SetSkeleton(skeleton);
 	animation->SortAnimationNodes(skeleton);
+
 	animations[name] = animation;
 }
 
@@ -229,17 +245,18 @@ auto Model::FindAnimation(const std::string & name) -> const std::shared_ptr<Ani
 	return animations[name];
 }
 
+
 void Model::SetWorkingDirectories(const std::string & directory)
 {
-    model_directory     = directory + "/";
-    material_directory  = model_directory + "Material/";
-    mesh_directory      = model_directory + "Mesh/";
-    texture_directory   = model_directory + "Texture/";
+	model_directory = directory + "/";
+	material_directory = model_directory + "Material/";
+	mesh_directory = model_directory + "Mesh/";
+	texture_directory = model_directory + "Texture/";
 
-    FileSystem::Create_Directory(model_directory);
-    FileSystem::Create_Directory(material_directory);
-    FileSystem::Create_Directory(mesh_directory);
-    FileSystem::Create_Directory(texture_directory);
+	FileSystem::Create_Directory(model_directory);
+	FileSystem::Create_Directory(material_directory);
+	FileSystem::Create_Directory(mesh_directory);
+	FileSystem::Create_Directory(texture_directory);
 	FileSystem::Create_Directory(animation_directory);
 }
 

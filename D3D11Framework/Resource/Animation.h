@@ -14,7 +14,7 @@ struct AnimationVertexWeights final
 	{
 		for (uint i = 0; i < MAX_VERTEX_WEIGHTS; i++)
 		{
-			if (weights[i] == 0.0f)
+			if (weights[i] == 0.0f) //weight의 기본값이 0이기 떄문에 값을 채워넣음
 			{
 				bone_ids[i] = bone_id;
 				weights[i] = weight;
@@ -76,6 +76,9 @@ public:
 
 	const bool GetAnimationEnd() const { return animation_end; }
 	void SetAnimationEnd(const bool& animation_end) { this->animation_end = animation_end; }
+
+	const int GetAnimationNodeCount() const { return animation_nodes.size(); }
+	const std::vector<AnimationNode>& GetAnimationNode() { return  animation_nodes;}
 
 private:
 	auto CalcInterpolatedScaling(const uint& animation_node_index, const float& time) -> const Vector3;
